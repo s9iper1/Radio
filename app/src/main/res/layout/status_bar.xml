@@ -12,7 +12,7 @@
         android:layout_margin="2dp"
         android:layout_width="@dimen/status_bar_album_art"
         android:layout_height="@dimen/status_bar_album_art"
-        android:background="@drawable/notification_image"
+        android:background="@drawable/icon"
         android:layout_centerVertical="true"
         android:scaleType="fitCenter" />
 
