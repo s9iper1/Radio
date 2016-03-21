@@ -18,6 +18,8 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         loadFragment(new Player());
         navigationView.getMenu().getItem(0).setChecked(true);
@@ -41,28 +43,30 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (Player.getInstance().sMediaPlayer.isPlaying()) {
                 showConfirmationDialog();
-            } else {
-                onBackPressed();
-            }
         }
     }
 
 
     public void selectDrawerItem(MenuItem menuItem) {
+        boolean workingFragment = false;
         Fragment fragment = null;
-        Class fragmentClass;
+        Class fragmentClass = null;
         switch (menuItem.getItemId()) {
-
             case R.id.nav_home:
+                workingFragment = true;
                 fragmentClass = Player.class;
                 break;
             case R.id.nav_info:
+                workingFragment = true;
                 fragmentClass = About.class;
+                break;
+            case R.id.nav_exit:
+                showConfirmationDialog();
                 break;
             default: fragmentClass = Player.class;
         }
+        if (workingFragment) {
             try {
                 fragment = (Fragment) fragmentClass.newInstance();
             } catch (Exception e) {
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity
             setTitle(menuItem.getTitle());
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+        }
         }
 
     private void showConfirmationDialog() {
@@ -107,6 +112,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         selectDrawerItem(item);
+        navigationView.getMenu().findItem(item.getItemId()).setChecked(true);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
