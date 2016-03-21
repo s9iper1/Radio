@@ -15,12 +15,12 @@ public class Helpers extends ContextWrapper {
     }
 
     static void updateMainViewButton() {
-        MainActivity mainActivity = MainActivity.getInstance();
-        if (mainActivity != null && mainActivity.mPlaybackButton != null) {
-            if (mainActivity.sMediaPlayer.isPlaying()) {
-                mainActivity.mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
+        Player player = Player.getInstance();
+        if (player != null && player.mPlaybackButton != null) {
+            if (player.sMediaPlayer.isPlaying()) {
+                player.mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
             } else {
-                mainActivity.mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_play);
+                player.mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_play);
             }
         }
     }

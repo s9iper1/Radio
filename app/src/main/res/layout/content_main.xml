@@ -12,28 +12,8 @@
     tools:context="com.byteshaft.shout.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <ImageView
-        android:id="@+id/image"
-        android:src="@drawable/image"
-        android:layout_width="fill_parent"
-        android:layout_height="150dp" />
-
-    <View
-        android:layout_below="@+id/image"
-        android:layout_marginTop="5dp"
-        android:id="@+id/view"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="#ffffff" />
-
-    <Button
-        android:id="@+id/button_toggle_playback"
-        android:background="@drawable/apollo_holo_dark_play"
-        android:layout_below="@+id/view"
-        android:layout_marginTop="30dp"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:onClick="onClick"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

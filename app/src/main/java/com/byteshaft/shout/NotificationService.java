@@ -34,7 +34,7 @@ public class NotificationService extends Service {
             showNotification();
             AppGlobals.setNotificationVisibility(true);
         } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
-            MainActivity.getInstance().togglePlayPause();
+            Player.getInstance().togglePlayPause();
             showNotification();
             Log.i(LOG_TAG, "Clicked Play");
         } else if (intent.getAction().equals(
@@ -42,7 +42,7 @@ public class NotificationService extends Service {
             Log.i(LOG_TAG, "Received Stop Foreground Intent");
             stopForeground(true);
             stopSelf();
-            MainActivity.getInstance().sMediaPlayer.pause();
+            Player.getInstance().sMediaPlayer.pause();
             AppGlobals.setNotificationVisibility(false);
         }
 
@@ -96,7 +96,7 @@ public class NotificationService extends Service {
         views.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
         bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
 
-        if (!MainActivity.getInstance().sMediaPlayer.isPlaying()) {
+        if (!Player.getInstance().sMediaPlayer.isPlaying()) {
             views.setImageViewResource(R.id.status_bar_play,
                     R.drawable.apollo_holo_dark_play);
             bigViews.setImageViewResource(R.id.status_bar_play,
