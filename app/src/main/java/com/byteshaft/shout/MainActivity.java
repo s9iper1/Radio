@@ -13,12 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener {
 
-    ImageButton mPlaybackButton;
+    Button mPlaybackButton;
     public CustomMediaPlayer sMediaPlayer;
     private static MainActivity sInstance;
     private boolean mFreshRun = true;
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         setInstance(this);
-        mPlaybackButton = (ImageButton) findViewById(R.id.button_toggle_playback);
+        mPlaybackButton = (Button) findViewById(R.id.button_toggle_playback);
         startService(new Intent(getApplicationContext(), StreamService.class));
     }
 
@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         sMediaPlayer = CustomMediaPlayer.getInstance(getApplicationContext());
         if (sMediaPlayer.isPlaying()) {
-            mPlaybackButton.setImageResource(R.drawable.apollo_holo_dark_pause);
+            mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
         } else {
-            mPlaybackButton.setImageResource(R.drawable.apollo_holo_dark_play);
+            mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_play);
         }
     }
 
