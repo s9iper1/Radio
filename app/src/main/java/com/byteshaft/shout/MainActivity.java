@@ -17,7 +17,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener {
 
-    Button mPlaybackButton;
+    public Button mPlaybackButton;
     public CustomMediaPlayer sMediaPlayer;
     private static MainActivity sInstance;
     private boolean mFreshRun = true;
@@ -70,9 +70,11 @@ public class MainActivity extends AppCompatActivity
         switch (v.getId()) {
             case R.id.button_toggle_playback:
                 togglePlayPause();
-                Intent notificationIntent = new Intent(getApplicationContext(), NotificationService.class);
-                notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-                startService(notificationIntent);
+                if (!AppGlobals.isNotificationVisible()) {
+                    Intent notificationIntent = new Intent(getApplicationContext(), NotificationService.class);
+                    notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+                    startService(notificationIntent);
+                }
         }
     }
 

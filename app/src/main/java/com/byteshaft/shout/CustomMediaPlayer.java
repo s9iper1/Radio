@@ -42,6 +42,7 @@ public class CustomMediaPlayer extends FFmpegMediaPlayer {
         super.stop();
         Helpers.updateMainViewButton();
         NotificationService.getsInstance().stopSelf();
+        AppGlobals.setNotificationVisibility(false);
     }
 
     @Override

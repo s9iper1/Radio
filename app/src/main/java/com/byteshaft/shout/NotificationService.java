@@ -49,6 +49,12 @@ public class NotificationService extends Service {
         return START_NOT_STICKY;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        AppGlobals.setNotificationVisibility(false);
+    }
+
     public void showNotification() {
         // Using RemoteViews to bind custom layouts into Notification
         views = new RemoteViews(getPackageName(),
