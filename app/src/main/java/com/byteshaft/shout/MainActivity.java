@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        sMediaPlayer = CustomMediaPlayer.getInstance(getApplicationContext());
+        sMediaPlayer = CustomMediaPlayer.getInstance();
         switch (v.getId()) {
             case R.id.button_toggle_playback:
                 togglePlayPause();
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        sMediaPlayer = CustomMediaPlayer.getInstance(getApplicationContext());
+        sMediaPlayer = CustomMediaPlayer.getInstance();
         if (sMediaPlayer.isPlaying()) {
             mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
         } else {

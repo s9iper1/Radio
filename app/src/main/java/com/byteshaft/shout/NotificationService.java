@@ -84,7 +84,7 @@ public class NotificationService extends Service {
 
         Intent nextIntent = new Intent(this, NotificationService.class);
         nextIntent.setAction(Constants.ACTION.NEXT_ACTION);
-       
+
         Intent closeIntent = new Intent(this, NotificationService.class);
         closeIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
         PendingIntent pcloseIntent = PendingIntent.getService(this, 0,

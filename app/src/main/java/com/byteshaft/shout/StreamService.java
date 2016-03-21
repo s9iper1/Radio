@@ -43,7 +43,7 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sService = this;
-        mMediaPlayer = CustomMediaPlayer.getInstance(getApplicationContext());
+        mMediaPlayer = CustomMediaPlayer.getInstance();
         mMediaPlayer.setOnPreparedListener(this);
         return START_NOT_STICKY;
     }
