@@ -104,7 +104,7 @@ public class NotificationService extends Service {
                     R.drawable.apollo_holo_dark_pause);
         }
 
-        bigViews.setTextViewText(R.id.status_bar_album_name, "Album Name");
+        bigViews.setTextViewText(R.id.status_bar_album_name, "8CCC FM");
 
         status = new Notification.Builder(this).build();
         status.contentView = views;

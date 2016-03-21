@@ -41,6 +41,7 @@ public class CustomMediaPlayer extends FFmpegMediaPlayer {
     public void stop() throws IllegalStateException {
         super.stop();
         Helpers.updateMainViewButton();
+        NotificationService.getsInstance().stopSelf();
     }
 
     @Override

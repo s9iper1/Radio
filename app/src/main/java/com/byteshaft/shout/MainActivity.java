@@ -57,7 +57,11 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            showConfirmationDialog();
+            if (sMediaPlayer.isPlaying()) {
+                showConfirmationDialog();
+            } else {
+                onBackPressed();
+            }
         }
     }
 
@@ -76,7 +80,6 @@ public class MainActivity extends AppCompatActivity
     public void togglePlayPause() {
         if (!sMediaPlayer.isPlaying()) {
             if (mFreshRun) {
-//                mPlaybackButton.setText("Buffering");
                 mFreshRun = false;
             }
             getService().startStream();
