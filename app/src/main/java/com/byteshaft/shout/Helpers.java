@@ -14,10 +14,14 @@ public class Helpers extends ContextWrapper {
         return (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
     }
 
-    static void updateMainViewButton(String text) {
+    static void updateMainViewButton() {
         MainActivity mainActivity = MainActivity.getInstance();
         if (mainActivity != null && mainActivity.mPlaybackButton != null) {
-            mainActivity.mPlaybackButton.setText(text);
+            if (mainActivity.sMediaPlayer.isPlaying()) {
+                mainActivity.mPlaybackButton.setImageResource(R.drawable.apollo_holo_dark_pause);
+            } else {
+                mainActivity.mPlaybackButton.setImageResource(R.drawable.apollo_holo_dark_play);
+            }
         }
     }
 }

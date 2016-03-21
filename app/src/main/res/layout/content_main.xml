@@ -10,11 +10,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.byteshaft.shout.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/app_bar_main"
+    android:background="@color/genre">
 
-    <Button
+    <ImageView
+        android:id="@+id/image"
+        android:src="@drawable/image"
+        android:layout_width="400dp"
+        android:layout_height="200dp" />
+
+    <ImageButton
         android:id="@+id/button_toggle_playback"
-        android:text="play"
+        android:src="@drawable/apollo_holo_dark_play"
+        android:layout_below="@+id/image"
+        android:layout_marginTop="50dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClick"
