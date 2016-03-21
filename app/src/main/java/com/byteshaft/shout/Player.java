@@ -31,6 +31,7 @@ public class Player extends Fragment implements View.OnClickListener  {
         mPlaybackButton = (Button) mBaseView.findViewById(R.id.button_toggle_playback);
         getActivity().startService(new Intent(getActivity().getApplicationContext(),
                 StreamService.class));
+        mPlaybackButton.setOnClickListener(this);
         return mBaseView;
     }
 
