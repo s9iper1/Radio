@@ -17,7 +17,6 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
 
     CustomMediaPlayer mMediaPlayer;
     private static StreamService sService;
-    private PlaybackNotification mNotification;
     private boolean mIsPrepared;
     private boolean mPreparing;
     private boolean mFreshRun = true;
@@ -46,7 +45,6 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
         sService = this;
         mMediaPlayer = CustomMediaPlayer.getInstance(getApplicationContext());
         mMediaPlayer.setOnPreparedListener(this);
-        mNotification = PlaybackNotification.getInstance(getApplicationContext());
         return START_NOT_STICKY;
     }
 
@@ -54,7 +52,6 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         sService = null;
-        mNotification.remove();
     }
 
     void startStream() {

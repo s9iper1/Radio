@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.byteshaft.streamsound.utils.Constants;
 
 public class NotificationService extends Service {
 
@@ -59,7 +58,7 @@ public class NotificationService extends Service {
         // showing default album image
         views.setViewVisibility(R.id.status_bar_icon, View.VISIBLE);
         views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
-        bigViews.setImageViewBitmap(R.id.status_bar_album_art, AppGlobals.getCurrentPlayingSongBitMap());
+//        bigViews.setImageViewBitmap(R.id.status_bar_album_art, AppGlobals.getCurrentPlayingSongBitMap());
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -90,16 +89,10 @@ public class NotificationService extends Service {
         views.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
         bigViews.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
 
-        views.setOnClickPendingIntent(R.id.status_bar_next, pnextIntent);
-        bigViews.setOnClickPendingIntent(R.id.status_bar_next, pnextIntent);
-
-        views.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent);
-        bigViews.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent);
-
         views.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
         bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
 
-        if (!PlayService.sMediaPlayer.isPlaying()) {
+        if (!MainActivity.getInstance().sMediaPlayer.isPlaying()) {
             views.setImageViewResource(R.id.status_bar_play,
                     R.drawable.apollo_holo_dark_play);
             bigViews.setImageViewResource(R.id.status_bar_play,
@@ -111,23 +104,13 @@ public class NotificationService extends Service {
                     R.drawable.apollo_holo_dark_pause);
         }
 
-        views.setTextViewText(R.id.status_bar_track_name, AppGlobals.getTitlesHashMap()
-                .get(AppGlobals.getCurrentPlayingSong()));
-        bigViews.setTextViewText(R.id.status_bar_track_name, AppGlobals.getTitlesHashMap()
-                .get(AppGlobals.getCurrentPlayingSong()));
-
-        views.setTextViewText(R.id.status_bar_artist_name, AppGlobals.getSongArtistHashMap()
-                .get(AppGlobals.getCurrentPlayingSong()));
-        bigViews.setTextViewText(R.id.status_bar_artist_name, AppGlobals.getSongArtistHashMap()
-                .get(AppGlobals.getCurrentPlayingSong()));
-
         bigViews.setTextViewText(R.id.status_bar_album_name, "Album Name");
 
         status = new Notification.Builder(this).build();
         status.contentView = views;
         status.bigContentView = bigViews;
         status.flags = Notification.FLAG_AUTO_CANCEL;
-        status.icon = R.drawable.short_notification;
+        status.icon = R.drawable.ic_stat_ic_notification;
         status.contentIntent = pendingIntent;
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
     }
