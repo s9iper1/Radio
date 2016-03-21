@@ -12,6 +12,7 @@
         android:layout_width="@dimen/notification_expanded_height"
         android:layout_height="@dimen/notification_expanded_height"
         android:scaleType="centerCrop"
+        android:background="@drawable/notification_image"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"/>
 
