@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener {
 
     Button mPlaybackButton;
-    private CustomMediaPlayer sMediaPlayer;
+    public CustomMediaPlayer sMediaPlayer;
     private static MainActivity sInstance;
     private boolean mFreshRun = true;
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void togglePlayPause() {
+    public void togglePlayPause() {
         if (!sMediaPlayer.isPlaying()) {
             if (mFreshRun) {
                 mPlaybackButton.setText("Buffering");

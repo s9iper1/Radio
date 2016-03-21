@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#666666"
+    >
+
+    <ImageView
+        android:id="@+id/status_bar_icon"
+        android:padding="2dp"
+        android:layout_margin="2dp"
+        android:layout_width="@dimen/status_bar_album_art"
+        android:layout_height="@dimen/status_bar_album_art"
+        android:background="@drawable/short_notification"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:id="@+id/buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:divider="?android:listDivider"
+        android:layout_toRightOf="@id/status_bar_icon"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:showDividers="middle"
+        android:dividerPadding="12.0dip">
+        <ImageButton
+            android:id="@+id/status_bar_prev"
+            android:background="?android:selectableItemBackground"
+            android:padding="10.0dip"
+            android:layout_width="0.0dip"
+            android:layout_height="@dimen/play_controls_notification"
+            android:src="@drawable/apollo_holo_dark_prev"
+            android:scaleType="fitCenter"
+            android:layout_weight="1.0" />
+        <ImageButton
+            android:id="@+id/status_bar_play"
+            android:background="?android:selectableItemBackground"
+            android:padding="10.0dip"
+            android:layout_width="0.0dip"
+            android:layout_height="@dimen/play_controls_notification"
+            android:src="@drawable/apollo_holo_dark_play"
+            android:scaleType="fitCenter"
+            android:layout_weight="1.0" />
+        <ImageButton android:id="@+id/status_bar_next"
+            android:background="?android:selectableItemBackground"
+            android:padding="10.0dip"
+            android:layout_width="0.0dip"
+            android:layout_height="@dimen/play_controls_notification"
+            android:src="@drawable/apollo_holo_dark_next"
+            android:scaleType="fitCenter"
+            android:layout_weight="1.0" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/status_bar_collapse"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/apollo_holo_dark_notification_bar_collapse" />
+
+</RelativeLayout>
