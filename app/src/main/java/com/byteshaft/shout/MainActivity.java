@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            System.out.println(AppGlobals.getSongStatus());
             if (AppGlobals.getSongStatus()) {
                 showConfirmationDialog();
             } else {
@@ -77,7 +76,11 @@ public class MainActivity extends AppCompatActivity
                 activity = About.class;
                 break;
             case R.id.nav_exit:
-                showConfirmationDialog();
+                if (AppGlobals.getSongStatus()) {
+                    showConfirmationDialog();
+                } else {
+                    exitConfirmation();
+                }
                 break;
         }
         if (workingFragment) {
@@ -101,6 +104,27 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 stopService(new Intent(getApplicationContext(), StreamService.class));
+                finish();
+            }
+        });
+        builder.create();
+        builder.show();
+    }
+
+    private void exitConfirmation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Exit Application");
+        builder.setMessage("You want to exit ?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
         });
@@ -139,13 +163,6 @@ public class MainActivity extends AppCompatActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
