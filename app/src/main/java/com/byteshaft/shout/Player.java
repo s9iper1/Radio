@@ -75,5 +75,4 @@ public class Player extends Fragment implements View.OnClickListener  {
             mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_play);
         }
     }
-
 }

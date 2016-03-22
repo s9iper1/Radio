@@ -93,17 +93,19 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     }
 
     private PhoneStateListener mCallStateListener = new PhoneStateListener() {
+        boolean songWasOn = false;
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);
             switch (state) {
                 case TelephonyManager.CALL_STATE_RINGING:
-                    if (mMediaPlayer.isPlaying()) {
+                    if (mMediaPlayer.isPlaying() && AppGlobals.getSongStatus()) {
                         mMediaPlayer.pause();
+                        songWasOn = true;
                     }
                     break;
                 case TelephonyManager.CALL_STATE_IDLE:
-                    if (!mFreshRun) {
+                    if (!mFreshRun && songWasOn) {
                         mMediaPlayer.start();
                     }
                     mFreshRun = false;
