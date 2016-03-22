@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">8CCC Radio</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="shoutcast_url">http://198.178.123.5:8476/stream/1/</string>
