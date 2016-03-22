@@ -8,8 +8,13 @@
     >
     
     <RelativeLayout
-        android:layout_width=""
-        android:layout_height=""></RelativeLayout>
+        android:layout_width="130dip"
+        android:layout_height="130dip"
+        android:layout_margin="2dp"
+        android:layout_alignParentLeft="true"
+        android:background="@android:color/white"
+        android:id="@+id/image_art_background"
+        android:layout_alignParentBottom="true">
 
     <ImageView
         android:id="@+id/status_bar_album_art"
@@ -17,8 +22,9 @@
         android:layout_height="@dimen/notification_expanded_height"
         android:scaleType="centerCrop"
         android:background="@drawable/image"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"/>
+       />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:gravity="center_vertical"
@@ -27,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:divider="?android:listDivider"
-        android:layout_toRightOf="@id/status_bar_album_art"
+        android:layout_toRightOf="@id/image_art_background"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:showDividers="middle"
@@ -48,7 +54,7 @@
         android:background="?android:dividerHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="1.0px"
-        android:layout_toRightOf="@id/status_bar_album_art"
+        android:layout_toRightOf="@id/image_art_background"
         android:layout_above="@+id/buttons"
         android:layout_alignParentRight="true" />
     <ImageButton
@@ -69,7 +75,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/status_bar_collapse"
-        android:layout_toRightOf="@id/status_bar_album_art"
+        android:layout_toRightOf="@id/image_art_background"
         android:layout_alignParentTop="true">
         <TextView
             android:ellipsize="marquee"

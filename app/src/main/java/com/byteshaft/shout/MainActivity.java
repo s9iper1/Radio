@@ -58,7 +58,12 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            System.out.println(AppGlobals.getSongStatus());
+            if (AppGlobals.getSongStatus()) {
                 showConfirmationDialog();
+            } else {
+                finish();
+            }
         }
     }
 

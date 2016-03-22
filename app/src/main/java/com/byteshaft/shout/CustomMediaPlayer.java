@@ -20,6 +20,7 @@ public class CustomMediaPlayer extends FFmpegMediaPlayer {
     public void start() throws IllegalStateException {
         super.start();
         Helpers.updateMainViewButton();
+        AppGlobals.setSongPlaying(true);
         NotificationService.getsInstance().showNotification();
     }
 
@@ -28,6 +29,7 @@ public class CustomMediaPlayer extends FFmpegMediaPlayer {
         super.stop();
         Helpers.updateMainViewButton();
         NotificationService.getsInstance().stopSelf();
+        AppGlobals.setSongPlaying(false);
         AppGlobals.setNotificationVisibility(false);
     }
 
@@ -35,6 +37,7 @@ public class CustomMediaPlayer extends FFmpegMediaPlayer {
     public void pause() throws IllegalStateException {
         super.pause();
         Helpers.updateMainViewButton();
+        AppGlobals.setSongPlaying(false);
         NotificationService.getsInstance().showNotification();
     }
 }
