@@ -4,15 +4,19 @@
     android:id="@+id/notification_bg"
     android:layout_width="fill_parent"
     android:layout_height="128.0dip"
-    android:background="@color/genre"
+    android:background="#000000"
     >
+    
+    <RelativeLayout
+        android:layout_width=""
+        android:layout_height=""></RelativeLayout>
 
     <ImageView
         android:id="@+id/status_bar_album_art"
         android:layout_width="@dimen/notification_expanded_height"
         android:layout_height="@dimen/notification_expanded_height"
         android:scaleType="centerCrop"
-        android:background="@drawable/icon"
+        android:background="@drawable/image"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"/>
 

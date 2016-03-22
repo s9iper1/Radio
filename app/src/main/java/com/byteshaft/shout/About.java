@@ -1,18 +1,26 @@
 package com.byteshaft.shout;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
-public class About extends Fragment {
-
-    private View mBaseView;
+public class About extends AppCompatActivity {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mBaseView = inflater.inflate(R.layout.about_layout, container, false);
-        return mBaseView;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.about_layout);
+        AppCompatActivity appCompatActivity = (AppCompatActivity) this;
+        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:return false;
+        }
     }
 }

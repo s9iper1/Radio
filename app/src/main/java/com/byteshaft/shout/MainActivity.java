@@ -20,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,14 +44,10 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        loadFragment(new Player());
-        navigationView.getMenu().getItem(0).setChecked(true);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.con);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
@@ -70,32 +65,19 @@ public class MainActivity extends AppCompatActivity
 
     public void selectDrawerItem(MenuItem menuItem) {
         boolean workingFragment = false;
-        Fragment fragment = null;
-        Class fragmentClass = null;
+        Class activity = null;
         switch (menuItem.getItemId()) {
-            case R.id.nav_home:
-                workingFragment = true;
-                fragmentClass = Player.class;
-                break;
             case R.id.nav_info:
                 workingFragment = true;
-                fragmentClass = About.class;
+                activity = About.class;
                 break;
             case R.id.nav_exit:
                 showConfirmationDialog();
                 break;
-            default: fragmentClass = Player.class;
         }
         if (workingFragment) {
-            try {
-                fragment = (Fragment) fragmentClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            menuItem.setCheckable(true);
-            setTitle(menuItem.getTitle());
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            Intent intent = new Intent(getApplicationContext(), activity);
+            startActivity(intent);
         }
         }
 
@@ -182,7 +164,14 @@ public class MainActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return new Player();
+                case 1:
+                    return new PlaceholderFragment();
+                default:
+                    return new PlaceholderFragment();
+            }
         }
 
         @Override
@@ -195,11 +184,11 @@ public class MainActivity extends AppCompatActivity
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "stream";
                 case 1:
-                    return "SECTION 2";
+                    return "programs";
                 case 2:
-                    return "SECTION 3";
+                    return "more";
             }
             return null;
         }

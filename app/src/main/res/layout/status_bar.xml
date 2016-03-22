@@ -3,8 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:background="#bdbdbd"
+    android:background="#000000"
     >
+
+    <RelativeLayout
+        android:id="@+id/image_background"
+        android:layout_width="60dp"
+        android:background="@android:color/white"
+        android:layout_centerVertical="true"
+        android:layout_height="60dp">
 
     <ImageView
         android:id="@+id/status_bar_icon"
@@ -13,8 +20,9 @@
         android:layout_width="@dimen/status_bar_album_art"
         android:layout_height="@dimen/status_bar_album_art"
         android:background="@drawable/icon"
-        android:layout_centerVertical="true"
         android:scaleType="fitCenter" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:gravity="center_vertical|center|center_horizontal"
@@ -23,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:divider="?android:listDivider"
-        android:layout_toRightOf="@id/status_bar_icon"
+        android:layout_toRightOf="@id/image_background"
         android:layout_alignParentRight="true"
         android:showDividers="middle"
         android:dividerPadding="12.0dip">
