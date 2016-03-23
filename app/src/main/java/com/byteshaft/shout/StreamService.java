@@ -13,7 +13,7 @@ import java.io.IOException;
 
 import wseemann.media.FFmpegMediaPlayer;
 
-public class StreamService extends Service implements FFmpegMediaPlayer.OnPreparedListener {
+public class StreamService extends Service implements FFmpegMediaPlayer.OnPreparedListener, FFmpegMediaPlayer.OnErrorListener {
 
     CustomMediaPlayer mMediaPlayer;
     private static StreamService sService;
@@ -46,6 +46,7 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
         sService = this;
         mMediaPlayer = CustomMediaPlayer.getInstance();
         mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnErrorListener(this);
         startOnPrepare = intent.getBooleanExtra(AppGlobals.READY_STREAM, false);
         if (startOnPrepare) {
             readyStream();
@@ -142,4 +143,12 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
             }
         }
     };
+
+    @Override
+    public boolean onError(FFmpegMediaPlayer fFmpegMediaPlayer, int i, int i1) {
+        System.out.println(i);
+        System.out.println(i1);
+        stopSelf();
+        return true;
+    }
 }

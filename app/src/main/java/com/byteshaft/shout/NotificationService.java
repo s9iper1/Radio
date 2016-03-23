@@ -42,7 +42,9 @@ public class NotificationService extends Service {
             Log.i(LOG_TAG, "Received Stop Foreground Intent");
             stopForeground(true);
             stopSelf();
-            Player.getInstance().sMediaPlayer.pause();
+            if (Player.getInstance().sMediaPlayer != null && AppGlobals.getSongStatus()) {
+                Player.getInstance().sMediaPlayer.stop();
+            }
             AppGlobals.setNotificationVisibility(false);
         }
 

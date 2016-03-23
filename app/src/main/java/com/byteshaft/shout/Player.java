@@ -57,16 +57,18 @@ public class Player extends Fragment implements View.OnClickListener  {
     }
 
     public void updateProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
         animation = ObjectAnimator.ofInt (mProgressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
         animation.setDuration(5000); //in milliseconds
-        animation.setInterpolator(new DecelerateInterpolator());
         animation.setRepeatCount(Animation.INFINITE);
+        animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
     }
 
     public void stopProgressBar() {
-        animation.cancel();
         mProgressBar.clearAnimation();
+        mProgressBar.animate().cancel();
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -79,6 +81,10 @@ public class Player extends Fragment implements View.OnClickListener  {
                 }
                 togglePlayPause();
                 if (!AppGlobals.isNotificationVisible()) {
+                    Intent notificationIntent = new Intent(getActivity().getApplicationContext(),
+                            NotificationService.class);
+                    notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+                    getActivity().startService(notificationIntent);
                 }
         }
     }
@@ -88,11 +94,18 @@ public class Player extends Fragment implements View.OnClickListener  {
     }
 
     public void togglePlayPause() {
+        System.out.println(sMediaPlayer.isPlaying());
         if (!sMediaPlayer.isPlaying()) {
             if (mFreshRun) {
                 mFreshRun = false;
             }
-            getService().startStream();
+            if (getService() == null) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
+                intent.putExtra(AppGlobals.READY_STREAM, false);
+                getActivity().startService(intent);
+            } else {
+                getService().startStream();
+            }
         } else {
             sMediaPlayer.stop();
             getService().stopSelf();

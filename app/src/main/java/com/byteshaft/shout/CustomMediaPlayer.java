@@ -15,6 +15,14 @@ public class CustomMediaPlayer extends FFmpegMediaPlayer {
         }
     }
 
+    static CustomMediaPlayer getInsance(boolean forceConstruct) {
+        if (forceConstruct) {
+            sCustomMediaPlayer = null;
+            return getInstance();
+        } else {
+            return getInstance();
+        }
+    }
 
     @Override
     public void start() throws IllegalStateException {
