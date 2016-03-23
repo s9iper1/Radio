@@ -20,6 +20,7 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     private boolean mIsPrepared;
     private boolean mPreparing;
     private boolean mFreshRun = true;
+    private boolean startOnPrepare;
 
     static StreamService getInstance() {
         return sService;
@@ -45,6 +46,10 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
         sService = this;
         mMediaPlayer = CustomMediaPlayer.getInstance();
         mMediaPlayer.setOnPreparedListener(this);
+        startOnPrepare = intent.getBooleanExtra(AppGlobals.READY_STREAM, false);
+        if (startOnPrepare) {
+            readyStream();
+        }
         return START_NOT_STICKY;
     }
 
@@ -54,11 +59,22 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
         sService = null;
     }
 
+    void readyStream() {
+        String url = getString(R.string.shoutcast_url);
+        try {
+            mMediaPlayer.setDataSource(url);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     void startStream() {
         if (mIsPrepared) {
             mMediaPlayer.start();
-        } else if (!mPreparing){
+        } else if (!mPreparing && !startOnPrepare) {
             String url = getString(R.string.shoutcast_url);
+            Player.getInstance().updateProgressBar();
             try {
                 mMediaPlayer.setDataSource(url);
                 mMediaPlayer.prepareAsync();
@@ -89,11 +105,15 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     @Override
     public void onPrepared(FFmpegMediaPlayer fFmpegMediaPlayer) {
         mIsPrepared = true;
-        mMediaPlayer.start();
+        if (!startOnPrepare) {
+            Player.getInstance().stopProgressBar();
+            mMediaPlayer.start();
+        }
     }
 
     private PhoneStateListener mCallStateListener = new PhoneStateListener() {
         boolean songWasOn = false;
+
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);

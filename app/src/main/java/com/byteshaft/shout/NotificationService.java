@@ -31,8 +31,8 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         sInstance = this;
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-            showNotification();
-            AppGlobals.setNotificationVisibility(true);
+//            showNotification();
+//            AppGlobals.setNotificationVisibility(true);
         } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
             Player.getInstance().togglePlayPause();
             showNotification();
@@ -96,16 +96,16 @@ public class NotificationService extends Service {
         views.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
         bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
 
-        if (!Player.getInstance().sMediaPlayer.isPlaying()) {
+        if (AppGlobals.getSongStatus()) {
             views.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.apollo_holo_dark_play);
+                    R.drawable.apollo_holo_dark_pause);
             bigViews.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.apollo_holo_dark_play);
+                    R.drawable.apollo_holo_dark_pause);
         } else {
             views.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.apollo_holo_dark_pause);
+                    R.drawable.apollo_holo_dark_play);
             bigViews.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.apollo_holo_dark_pause);
+                    R.drawable.apollo_holo_dark_play);
         }
 
         bigViews.setTextViewText(R.id.status_bar_album_name, "8CCC FM");

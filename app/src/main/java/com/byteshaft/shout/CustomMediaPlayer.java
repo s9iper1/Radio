@@ -19,25 +19,23 @@ public class CustomMediaPlayer extends FFmpegMediaPlayer {
     @Override
     public void start() throws IllegalStateException {
         super.start();
-        Helpers.updateMainViewButton();
         AppGlobals.setSongPlaying(true);
+        Helpers.updateMainViewButton();
         NotificationService.getsInstance().showNotification();
     }
 
     @Override
     public void stop() throws IllegalStateException {
         super.stop();
-        Helpers.updateMainViewButton();
-        NotificationService.getsInstance().stopSelf();
+        System.out.println("LOGhhhhhhh stopped");
+//        Helpers.updateMainViewButton();
+//        NotificationService.getsInstance().stopSelf();
+//        AppGlobals.setSongPlaying(false);
+//        AppGlobals.setNotificationVisibility(false);
         AppGlobals.setSongPlaying(false);
-        AppGlobals.setNotificationVisibility(false);
-    }
-
-    @Override
-    public void pause() throws IllegalStateException {
-        super.pause();
         Helpers.updateMainViewButton();
-        AppGlobals.setSongPlaying(false);
         NotificationService.getsInstance().showNotification();
     }
+
+
 }
