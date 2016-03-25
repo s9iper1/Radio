@@ -18,7 +18,6 @@ public class Player extends Fragment implements View.OnClickListener  {
     public Button mPlaybackButton;
     private static Player sInstance;
     private boolean mFreshRun = true;
-    private static boolean stopped = false;
     private ProgressBar mProgressBar;
     private ObjectAnimator animation;
 
@@ -81,7 +80,6 @@ public class Player extends Fragment implements View.OnClickListener  {
 
     @Override
     public void onClick(View v) {
-//        sMediaPlayer = CustomMediaPlayer.getInstance();
         switch (v.getId()) {
             case R.id.button_toggle_playback:
                 if (animation != null && animation.isRunning()) {
@@ -118,7 +116,6 @@ public class Player extends Fragment implements View.OnClickListener  {
             Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
             intent.putExtra(AppGlobals.READY_STREAM, false);
             getActivity().startService(intent);
-            stopped = true;
         }
     }
 
