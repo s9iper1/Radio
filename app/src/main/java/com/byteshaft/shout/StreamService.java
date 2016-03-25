@@ -17,7 +17,8 @@ import wseemann.media.FFmpegMediaPlayer;
 
 public class StreamService extends Service implements FFmpegMediaPlayer.OnPreparedListener, FFmpegMediaPlayer.OnErrorListener {
 
-    CustomMediaPlayer mMediaPlayer;
+
+    private CustomMediaPlayer mMediaPlayer;
     private static StreamService sService;
     private boolean mIsPrepared;
     private boolean mPreparing;
