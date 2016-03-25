@@ -78,7 +78,7 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
         if (mIsPrepared) {
             mMediaPlayer.start();
         } else if (!mPreparing && !startOnPrepare) {
-            Toast.makeText(Player.getInstance().getActivity(), "Streaming", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Player.getInstance().getActivity(), "Streaming...", Toast.LENGTH_SHORT).show();
             String url = getString(R.string.shoutcast_url);
             Player.getInstance().updateProgressBar();
             try {
