@@ -16,7 +16,6 @@ public class Player extends Fragment implements View.OnClickListener  {
 
     private View mBaseView;
     public Button mPlaybackButton;
-    public CustomMediaPlayer sMediaPlayer;
     private static Player sInstance;
     private boolean mFreshRun = true;
     private static boolean stopped = false;
@@ -63,7 +62,6 @@ public class Player extends Fragment implements View.OnClickListener  {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
     }
 
     public void updateProgressBar() {
@@ -83,7 +81,7 @@ public class Player extends Fragment implements View.OnClickListener  {
 
     @Override
     public void onClick(View v) {
-        sMediaPlayer = CustomMediaPlayer.getInstance();
+//        sMediaPlayer = CustomMediaPlayer.getInstance();
         switch (v.getId()) {
             case R.id.button_toggle_playback:
                 if (animation != null && animation.isRunning()) {
@@ -116,7 +114,6 @@ public class Player extends Fragment implements View.OnClickListener  {
                 getService().startStream();
             }
         } else {
-            sMediaPlayer.stop();
             getService().stopSelf();
             Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
             intent.putExtra(AppGlobals.READY_STREAM, false);
@@ -128,8 +125,7 @@ public class Player extends Fragment implements View.OnClickListener  {
     @Override
     public void onResume() {
         super.onResume();
-        sMediaPlayer = CustomMediaPlayer.getInstance();
-        if (sMediaPlayer.isPlaying()) {
+        if (AppGlobals.getSongStatus()) {
             mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
         } else {
             mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_play);

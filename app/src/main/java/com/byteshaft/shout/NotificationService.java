@@ -34,7 +34,11 @@ public class NotificationService extends Service {
 //            showNotification();
 //            AppGlobals.setNotificationVisibility(true);
         } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
-            Player.getInstance().togglePlayPause();
+            try {
+                Player.getInstance().togglePlayPause();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             showNotification();
             Log.i(LOG_TAG, "Clicked Play");
         } else if (intent.getAction().equals(
@@ -42,9 +46,6 @@ public class NotificationService extends Service {
             Log.i(LOG_TAG, "Received Stop Foreground Intent");
             stopForeground(true);
             stopSelf();
-            if (Player.getInstance().sMediaPlayer != null && AppGlobals.getSongStatus()) {
-                Player.getInstance().sMediaPlayer.stop();
-            }
             AppGlobals.setNotificationVisibility(false);
         }
 
