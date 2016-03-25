@@ -23,7 +23,6 @@ public class Helpers extends ContextWrapper {
     static void updateMainViewButton() {
         Player player = Player.getInstance();
         if (player != null && player.mPlaybackButton != null) {
-            System.out.println(player.sMediaPlayer.isPlaying());
             if (AppGlobals.getSongStatus()) {
                 player.mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
             } else {

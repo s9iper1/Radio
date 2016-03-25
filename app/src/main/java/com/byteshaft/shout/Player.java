@@ -48,12 +48,22 @@ public class Player extends Fragment implements View.OnClickListener  {
         mPlaybackButton.setOnClickListener(this);
         Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
         intent.putExtra(AppGlobals.READY_STREAM, true);
-        getActivity().startService(intent);
+        if (getService() == null) {
+            getActivity().startService(intent);
+        }
         Intent notificationIntent = new Intent(getActivity().getApplicationContext(),
                 NotificationService.class);
         notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-        getActivity().startService(notificationIntent);
+        if (NotificationService.getsInstance() == null) {
+            getActivity().startService(notificationIntent);
+        }
         return mBaseView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
     }
 
     public void updateProgressBar() {
@@ -94,8 +104,7 @@ public class Player extends Fragment implements View.OnClickListener  {
     }
 
     public void togglePlayPause() {
-        System.out.println(sMediaPlayer.isPlaying());
-        if (!sMediaPlayer.isPlaying()) {
+        if (!AppGlobals.getSongStatus()) {
             if (mFreshRun) {
                 mFreshRun = false;
             }
