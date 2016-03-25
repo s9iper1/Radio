@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.view.View;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -61,7 +63,9 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     }
 
     void readyStream() {
+        Player.getInstance().updateProgressBar();
         String url = getString(R.string.shoutcast_url);
+        Toast.makeText(Player.getInstance().getActivity(), "Streaming", Toast.LENGTH_LONG).show();
         try {
             mMediaPlayer.setDataSource(url);
             mMediaPlayer.prepareAsync();
@@ -74,6 +78,7 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
         if (mIsPrepared) {
             mMediaPlayer.start();
         } else if (!mPreparing && !startOnPrepare) {
+            Toast.makeText(Player.getInstance().getActivity(), "Streaming", Toast.LENGTH_SHORT).show();
             String url = getString(R.string.shoutcast_url);
             Player.getInstance().updateProgressBar();
             try {
@@ -106,10 +111,10 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     @Override
     public void onPrepared(FFmpegMediaPlayer fFmpegMediaPlayer) {
         mIsPrepared = true;
-        if (!startOnPrepare) {
+        if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
             Player.getInstance().stopProgressBar();
-            mMediaPlayer.start();
         }
+        mMediaPlayer.start();
     }
 
     private PhoneStateListener mCallStateListener = new PhoneStateListener() {

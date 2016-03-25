@@ -18,7 +18,7 @@ public class Player extends Fragment implements View.OnClickListener  {
     public Button mPlaybackButton;
     private static Player sInstance;
     private boolean mFreshRun = true;
-    private ProgressBar mProgressBar;
+    public ProgressBar mProgressBar;
     private ObjectAnimator animation;
 
     private void setInstance(Player activity) {
