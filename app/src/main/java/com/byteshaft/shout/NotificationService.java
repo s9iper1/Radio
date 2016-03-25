@@ -16,7 +16,7 @@ public class NotificationService extends Service {
     private final String LOG_TAG = "NotificationService";
     private RemoteViews views;
     private RemoteViews bigViews;
-    private static NotificationService sInstance;
+    public static NotificationService sInstance;
 
     public static NotificationService getsInstance() {
         return sInstance;
@@ -56,6 +56,8 @@ public class NotificationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         AppGlobals.setNotificationVisibility(false);
+        stopForeground(true);
+        stopSelf();
     }
 
     public void showNotification() {

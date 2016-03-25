@@ -53,6 +53,11 @@ public class Player extends Fragment implements View.OnClickListener {
         Intent notificationIntent = new Intent(getActivity().getApplicationContext(),
                 NotificationService.class);
         notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+        Log.i("NOtification", String.valueOf(NotificationService.getsInstance() == null));
+        if (NotificationService.getsInstance() != null) {
+            NotificationService.getsInstance().onDestroy();
+            NotificationService.sInstance = null;
+        }
         if (NotificationService.getsInstance() == null) {
             getActivity().startService(notificationIntent);
         }
@@ -107,9 +112,13 @@ public class Player extends Fragment implements View.OnClickListener {
                 mFreshRun = false;
             }
             if (getService() == null) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
+                Intent intent = new Intent(AppGlobals.getContext(), StreamService.class);
                 intent.putExtra(AppGlobals.READY_STREAM, false);
-                getActivity().startService(intent);
+                if (getActivity() == null) {
+                    NotificationService.getsInstance().stopForeground(true);
+                } else {
+                    getActivity().startService(intent);
+                }
             }
         } else {
             if (getService() != null) {

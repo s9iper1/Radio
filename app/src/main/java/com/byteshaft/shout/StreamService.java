@@ -77,6 +77,9 @@ public class StreamService extends Service implements ExoPlayer.Listener{
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         sService = null;
+        NotificationService.getsInstance().stopForeground(true);
+        NotificationService.getsInstance().onDestroy();
+        stopSelf();
     }
 
     void stopStream() {
