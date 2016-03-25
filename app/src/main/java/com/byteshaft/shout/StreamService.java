@@ -5,25 +5,31 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-import java.io.IOException;
+import com.google.android.exoplayer.ExoPlaybackException;
+import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
+import com.google.android.exoplayer.MediaCodecSelector;
+import com.google.android.exoplayer.extractor.ExtractorSampleSource;
+import com.google.android.exoplayer.upstream.Allocator;
+import com.google.android.exoplayer.upstream.DataSource;
+import com.google.android.exoplayer.upstream.DefaultAllocator;
+import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 
-import wseemann.media.FFmpegMediaPlayer;
-
-public class StreamService extends Service implements FFmpegMediaPlayer.OnPreparedListener, FFmpegMediaPlayer.OnErrorListener {
+public class StreamService extends Service implements ExoPlayer.Listener{
 
 
-    private CustomMediaPlayer mMediaPlayer;
+    private ExoPlayer mMediaPlayer;
     private static StreamService sService;
-    private boolean mIsPrepared;
-    private boolean mPreparing;
     private boolean mFreshRun = true;
-    private boolean startOnPrepare;
+    private MediaCodecAudioTrackRenderer audioRenderer;
+    private ExtractorSampleSource sampleSource;
 
     static StreamService getInstance() {
         return sService;
@@ -47,14 +53,24 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sService = this;
-        mMediaPlayer = CustomMediaPlayer.getInstance();
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnErrorListener(this);
-        startOnPrepare = intent.getBooleanExtra(AppGlobals.READY_STREAM, false);
-        if (startOnPrepare) {
-            readyStream();
-        }
+        playStream();
         return START_NOT_STICKY;
+    }
+
+    private void playStream() {
+        Allocator allocator = new DefaultAllocator(300);
+        DataSource dataSource = new DefaultUriDataSource(getApplicationContext(), null,
+                " Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)" +
+                        " Chrome/49.0.2623.87 Safari/537.36");
+        sampleSource = new ExtractorSampleSource(
+                Uri.parse("http://198.178.123.5:8476/stream/1/"),
+                dataSource, allocator, 300 * 300);
+        audioRenderer = new MediaCodecAudioTrackRenderer(
+                sampleSource, MediaCodecSelector.DEFAULT);
+        mMediaPlayer = ExoPlayer.Factory.newInstance(1, 300, 300);
+        mMediaPlayer.prepare(audioRenderer);
+        mMediaPlayer.setPlayWhenReady(true);
+        mMediaPlayer.addListener(this);
     }
 
     @Override
@@ -63,41 +79,12 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
         sService = null;
     }
 
-    void readyStream() {
-        Player.getInstance().updateProgressBar();
-        String url = getString(R.string.shoutcast_url);
-        Toast.makeText(Player.getInstance().getActivity(), "Streaming", Toast.LENGTH_LONG).show();
-        try {
-            mMediaPlayer.setDataSource(url);
-            mMediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void startStream() {
-        if (mIsPrepared) {
-            mMediaPlayer.start();
-        } else if (!mPreparing && !startOnPrepare) {
-            Toast.makeText(Player.getInstance().getActivity(), "Streaming...", Toast.LENGTH_SHORT).show();
-            String url = getString(R.string.shoutcast_url);
-            Player.getInstance().updateProgressBar();
-            try {
-                mMediaPlayer.setDataSource(url);
-                mMediaPlayer.prepareAsync();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mPreparing = true;
-        }
-    }
-
     void stopStream() {
-        if (mMediaPlayer.isPlaying()) {
+        if (AppGlobals.getSongStatus()) {
             mMediaPlayer.stop();
             mMediaPlayer.release();
             mMediaPlayer = null;
-            CustomMediaPlayer.sCustomMediaPlayer = null;
+            stopSelf();
         }
     }
 
@@ -109,15 +96,6 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
         unregisterReceiver(mOutGoingCallListener);
     }
 
-    @Override
-    public void onPrepared(FFmpegMediaPlayer fFmpegMediaPlayer) {
-        mIsPrepared = true;
-        if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
-            Player.getInstance().stopProgressBar();
-        }
-        mMediaPlayer.start();
-    }
-
     private PhoneStateListener mCallStateListener = new PhoneStateListener() {
         boolean songWasOn = false;
 
@@ -126,14 +104,14 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
             super.onCallStateChanged(state, incomingNumber);
             switch (state) {
                 case TelephonyManager.CALL_STATE_RINGING:
-                    if (mMediaPlayer.isPlaying() && AppGlobals.getSongStatus()) {
-                        mMediaPlayer.pause();
+                    if (AppGlobals.getSongStatus()) {
+                        mMediaPlayer.stop();
                         songWasOn = true;
                     }
                     break;
                 case TelephonyManager.CALL_STATE_IDLE:
                     if (!mFreshRun && songWasOn) {
-                        mMediaPlayer.start();
+                        playStream();
                     }
                     mFreshRun = false;
                     break;
@@ -144,17 +122,41 @@ public class StreamService extends Service implements FFmpegMediaPlayer.OnPrepar
     private BroadcastReceiver mOutGoingCallListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
+            if (AppGlobals.getSongStatus()) {
+                mMediaPlayer.stop();
             }
         }
     };
 
     @Override
-    public boolean onError(FFmpegMediaPlayer fFmpegMediaPlayer, int i, int i1) {
-        System.out.println(i);
-        System.out.println(i1);
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        Log.i("TAG", "update");
+        System.out.println(playbackState);
+        if (playbackState == 2) {
+            Player.getInstance().updateProgressBar();
+        }
+        if (playbackState == 4) {
+            AppGlobals.setSongPlaying(true);
+            NotificationService.getsInstance().showNotification();
+            Player.getInstance().stopProgressBar();
+            Helpers.updateMainViewButton();
+        }
+    }
+
+    @Override
+    public void onPlayWhenReadyCommitted() {
+        System.out.println("onPlayWhenReadyCommitted");
+
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+        System.out.println("Error");
+        AppGlobals.setSongPlaying(false);
+        if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
+            Player.getInstance().stopProgressBar();
+            Helpers.updateMainViewButton();
+        }
         stopSelf();
-        return true;
     }
 }

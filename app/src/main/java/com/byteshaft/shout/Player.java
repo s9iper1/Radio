@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-public class Player extends Fragment implements View.OnClickListener  {
+public class Player extends Fragment implements View.OnClickListener {
 
     private View mBaseView;
     public Button mPlaybackButton;
@@ -65,7 +66,7 @@ public class Player extends Fragment implements View.OnClickListener  {
 
     public void updateProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
-        animation = ObjectAnimator.ofInt (mProgressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+        animation = ObjectAnimator.ofInt(mProgressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
         animation.setDuration(5000); //in milliseconds
         animation.setRepeatCount(Animation.INFINITE);
         animation.setInterpolator(new DecelerateInterpolator());
@@ -100,6 +101,7 @@ public class Player extends Fragment implements View.OnClickListener  {
     }
 
     public void togglePlayPause() {
+        Log.i("toggle", "" + AppGlobals.getSongStatus());
         if (!AppGlobals.getSongStatus()) {
             if (mFreshRun) {
                 mFreshRun = false;
@@ -108,14 +110,14 @@ public class Player extends Fragment implements View.OnClickListener  {
                 Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
                 intent.putExtra(AppGlobals.READY_STREAM, false);
                 getActivity().startService(intent);
-            } else {
-                getService().startStream();
             }
         } else {
-            getService().stopSelf();
-            Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
-            intent.putExtra(AppGlobals.READY_STREAM, false);
-            getActivity().startService(intent);
+            if (getService() != null) {
+                getService().stopStream();
+                AppGlobals.setSongPlaying(false);
+                Helpers.updateMainViewButton();
+                NotificationService.getsInstance().showNotification();
+            }
         }
     }
 
