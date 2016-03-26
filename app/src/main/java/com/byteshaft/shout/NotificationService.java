@@ -113,6 +113,9 @@ public class NotificationService extends Service {
                     R.drawable.apollo_holo_dark_play);
         }
 
+        views.setImageViewBitmap(R.id.status_bar_icon, AppGlobals.getSmallBitMap());
+        bigViews.setImageViewBitmap(R.id.status_bar_album_art, AppGlobals.getBigBitMap());
+
         bigViews.setTextViewText(R.id.status_bar_album_name, "8CCC FM");
 
         status = new Notification.Builder(this).build();

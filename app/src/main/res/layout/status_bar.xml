@@ -19,7 +19,6 @@
         android:layout_margin="2dp"
         android:layout_width="@dimen/status_bar_album_art"
         android:layout_height="@dimen/status_bar_album_art"
-        android:background="@drawable/notification"
         android:scaleType="fitCenter" />
 
     </RelativeLayout>

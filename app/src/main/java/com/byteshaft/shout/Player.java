@@ -106,7 +106,6 @@ public class Player extends Fragment implements View.OnClickListener {
     }
 
     public void togglePlayPause() {
-        Log.i("toggle", "" + AppGlobals.getSongStatus());
         if (!AppGlobals.getSongStatus()) {
             if (mFreshRun) {
                 mFreshRun = false;
@@ -116,6 +115,7 @@ public class Player extends Fragment implements View.OnClickListener {
                 intent.putExtra(AppGlobals.READY_STREAM, false);
                 if (getActivity() == null) {
                     NotificationService.getsInstance().stopForeground(true);
+                    NotificationService.getsInstance().stopSelf();
                 } else {
                     getActivity().startService(intent);
                 }
