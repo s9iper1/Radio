@@ -5,31 +5,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 
-import com.google.android.exoplayer.ExoPlaybackException;
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
-import com.google.android.exoplayer.MediaCodecSelector;
-import com.google.android.exoplayer.extractor.ExtractorSampleSource;
-import com.google.android.exoplayer.upstream.Allocator;
-import com.google.android.exoplayer.upstream.DataSource;
-import com.google.android.exoplayer.upstream.DefaultAllocator;
-import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import co.mobiwise.library.radio.RadioListener;
+import co.mobiwise.library.radio.RadioManager;
 
-public class StreamService extends Service implements ExoPlayer.Listener{
+public class StreamService extends Service implements RadioListener {
 
-
-    private ExoPlayer mMediaPlayer;
+    private RadioManager mRadioManager;
     private static StreamService sService;
     private boolean mFreshRun = true;
-    private MediaCodecAudioTrackRenderer audioRenderer;
-    private ExtractorSampleSource sampleSource;
 
     static StreamService getInstance() {
         return sService;
@@ -53,24 +43,15 @@ public class StreamService extends Service implements ExoPlayer.Listener{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sService = this;
-        playStream();
+        mRadioManager = RadioManager.with(this);
+        mRadioManager.registerListener(this);
+        mRadioManager.setLogging(true);
+        mRadioManager.connect();
         return START_NOT_STICKY;
     }
 
-    private void playStream() {
-        Allocator allocator = new DefaultAllocator(300);
-        DataSource dataSource = new DefaultUriDataSource(getApplicationContext(), null,
-                " Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)" +
-                        " Chrome/49.0.2623.87 Safari/537.36");
-        sampleSource = new ExtractorSampleSource(
-                Uri.parse("http://198.178.123.5:8476/stream/1/"),
-                dataSource, allocator, 300 * 300);
-        audioRenderer = new MediaCodecAudioTrackRenderer(
-                sampleSource, MediaCodecSelector.DEFAULT);
-        mMediaPlayer = ExoPlayer.Factory.newInstance(1, 300, 300);
-        mMediaPlayer.prepare(audioRenderer);
-        mMediaPlayer.setPlayWhenReady(true);
-        mMediaPlayer.addListener(this);
+    public void playStream() {
+        mRadioManager.startRadio("http://198.178.123.5:8476/stream/1/");
     }
 
     @Override
@@ -84,10 +65,7 @@ public class StreamService extends Service implements ExoPlayer.Listener{
 
     void stopStream() {
         if (AppGlobals.getSongStatus()) {
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-            stopSelf();
+            mRadioManager.stopRadio();
         }
     }
 
@@ -108,7 +86,7 @@ public class StreamService extends Service implements ExoPlayer.Listener{
             switch (state) {
                 case TelephonyManager.CALL_STATE_RINGING:
                     if (AppGlobals.getSongStatus()) {
-                        mMediaPlayer.stop();
+                        mRadioManager.stopRadio();
                         songWasOn = true;
                     }
                     break;
@@ -126,40 +104,56 @@ public class StreamService extends Service implements ExoPlayer.Listener{
         @Override
         public void onReceive(Context context, Intent intent) {
             if (AppGlobals.getSongStatus()) {
-                mMediaPlayer.stop();
+                mRadioManager.stopRadio();
             }
         }
     };
 
     @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        Log.i("TAG", "update");
-        System.out.println(playbackState);
-        if (playbackState == 2) {
-            Player.getInstance().updateProgressBar();
-        }
-        if (playbackState == 4) {
-            AppGlobals.setSongPlaying(true);
-            NotificationService.getsInstance().showNotification();
-            Player.getInstance().stopProgressBar();
-            Helpers.updateMainViewButton();
-        }
-    }
-
-    @Override
-    public void onPlayWhenReadyCommitted() {
-        System.out.println("onPlayWhenReadyCommitted");
+    public void onRadioLoading() {
+        Player.getInstance().updateProgressBar();
 
     }
 
     @Override
-    public void onPlayerError(ExoPlaybackException error) {
-        System.out.println("Error");
+    public void onRadioConnected() {
+        playStream();
+
+    }
+
+    @Override
+    public void onRadioStarted() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                AppGlobals.setSongPlaying(true);
+                NotificationService.getsInstance().showNotification();
+                Player.getInstance().stopProgressBar();
+                Helpers.updateMainViewButton();
+            }
+        });
+
+    }
+
+    @Override
+    public void onRadioStopped() {
         AppGlobals.setSongPlaying(false);
+        NotificationService.getsInstance().showNotification();
+        Helpers.updateMainViewButton();
+
+    }
+
+    @Override
+    public void onMetaDataReceived(String s, String s2) {
+
+    }
+
+    @Override
+    public void onError() {
         if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
             Player.getInstance().stopProgressBar();
             Helpers.updateMainViewButton();
         }
-        stopSelf();
     }
 }

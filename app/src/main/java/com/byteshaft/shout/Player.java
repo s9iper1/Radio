@@ -120,6 +120,7 @@ public class Player extends Fragment implements View.OnClickListener {
                     getActivity().startService(intent);
                 }
             }
+            getService().playStream();
         } else {
             if (getService() != null) {
                 getService().stopStream();
