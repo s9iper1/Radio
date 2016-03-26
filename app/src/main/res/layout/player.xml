@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:layout_below="@+id/tabs"
     >
-
+    
     <ImageView
         android:id="@+id/image"
-        android:src="@drawable/image"
+        android:src="@drawable/player_image"
         android:layout_width="fill_parent"
         android:layout_height="150dp" />
 

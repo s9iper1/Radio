@@ -21,7 +21,7 @@
         android:layout_width="@dimen/notification_expanded_height"
         android:layout_height="@dimen/notification_expanded_height"
         android:scaleType="centerCrop"
-        android:background="@drawable/image"
+        android:background="@drawable/notification"
        />
 
     </RelativeLayout>
