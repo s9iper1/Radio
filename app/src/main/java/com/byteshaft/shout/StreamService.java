@@ -45,7 +45,6 @@ public class StreamService extends Service implements RadioListener {
         sService = this;
         mRadioManager = RadioManager.with(this);
         mRadioManager.registerListener(this);
-        mRadioManager.setLogging(true);
         mRadioManager.connect();
         return START_NOT_STICKY;
     }
@@ -111,8 +110,13 @@ public class StreamService extends Service implements RadioListener {
 
     @Override
     public void onRadioLoading() {
-        Player.getInstance().updateProgressBar();
-
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Player.getInstance().updateProgressBar();
+            }
+        });
     }
 
     @Override
@@ -138,10 +142,16 @@ public class StreamService extends Service implements RadioListener {
 
     @Override
     public void onRadioStopped() {
-        AppGlobals.setSongPlaying(false);
-        NotificationService.getsInstance().showNotification();
-        Helpers.updateMainViewButton();
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                AppGlobals.setSongPlaying(false);
+                NotificationService.getsInstance().showNotification();
+                Helpers.updateMainViewButton();
 
+            }
+        });
     }
 
     @Override
@@ -151,9 +161,17 @@ public class StreamService extends Service implements RadioListener {
 
     @Override
     public void onError() {
-        if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
-            Player.getInstance().stopProgressBar();
-            Helpers.updateMainViewButton();
-        }
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
+                    Player.getInstance().stopProgressBar();
+                    Helpers.updateMainViewButton();
+                }
+            }
+        });
     }
 }
+
+

@@ -1,13 +1,19 @@
 package com.byteshaft.shout;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 
 public class NotificationService extends Service {
@@ -17,6 +23,8 @@ public class NotificationService extends Service {
     private RemoteViews views;
     private RemoteViews bigViews;
     public static NotificationService sInstance;
+    private ImageLoader imageLoader;
+    private NotificationManager notificationManager;
 
     public static NotificationService getsInstance() {
         return sInstance;
@@ -30,6 +38,9 @@ public class NotificationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sInstance = this;
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init(ImageLoaderConfiguration.createDefault(getApplicationContext()));
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
 //            showNotification();
 //            AppGlobals.setNotificationVisibility(true);
@@ -113,8 +124,17 @@ public class NotificationService extends Service {
                     R.drawable.apollo_holo_dark_play);
         }
 
-        views.setImageViewBitmap(R.id.status_bar_icon, AppGlobals.getSmallBitMap());
-        bigViews.setImageViewBitmap(R.id.status_bar_album_art, AppGlobals.getBigBitMap());
+        imageLoader.loadImage("drawable://" + R.drawable.notification_big, new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                // Do whatever you want with Bitmap
+                views.setImageViewBitmap(R.id.status_bar_icon, loadedImage);
+                notificationManager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+                bigViews.setImageViewBitmap(R.id.status_bar_album_art, loadedImage);
+                notificationManager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+
+            }
+        });
 
         bigViews.setTextViewText(R.id.status_bar_album_name, "8CCC FM");
 
