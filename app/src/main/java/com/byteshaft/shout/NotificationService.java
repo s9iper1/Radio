@@ -86,17 +86,17 @@ public class NotificationService extends Service {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent previousIntent = new Intent(this, NotificationService.class);
         previousIntent.setAction(Constants.ACTION.PREV_ACTION);
         PendingIntent ppreviousIntent = PendingIntent.getService(this, 0,
-                previousIntent, 0);
+                previousIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent playIntent = new Intent(this, NotificationService.class);
         playIntent.setAction(Constants.ACTION.PLAY_ACTION);
         PendingIntent pplayIntent = PendingIntent.getService(this, 0,
-                playIntent, 0);
+                playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent nextIntent = new Intent(this, NotificationService.class);
         nextIntent.setAction(Constants.ACTION.NEXT_ACTION);
@@ -104,7 +104,7 @@ public class NotificationService extends Service {
         Intent closeIntent = new Intent(this, NotificationService.class);
         closeIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
         PendingIntent pcloseIntent = PendingIntent.getService(this, 0,
-                closeIntent, 0);
+                closeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         views.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
         bigViews.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
@@ -124,12 +124,11 @@ public class NotificationService extends Service {
                     R.drawable.apollo_holo_dark_play);
         }
 
-        imageLoader.loadImage("drawable://" + R.drawable.notification_big, new SimpleImageLoadingListener() {
+        imageLoader.loadImage("drawable://" + R.drawable.notification_big_new, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 // Do whatever you want with Bitmap
                 views.setImageViewBitmap(R.id.status_bar_icon, loadedImage);
-                notificationManager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
                 bigViews.setImageViewBitmap(R.id.status_bar_album_art, loadedImage);
                 notificationManager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
 
@@ -141,7 +140,7 @@ public class NotificationService extends Service {
         status = new Notification.Builder(this).build();
         status.contentView = views;
         status.bigContentView = bigViews;
-        status.flags = Notification.FLAG_AUTO_CANCEL;
+        status.flags = Notification.FLAG_ONGOING_EVENT;
         status.icon = R.drawable.icon;
         status.contentIntent = pendingIntent;
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
