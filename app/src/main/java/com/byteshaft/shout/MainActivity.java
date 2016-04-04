@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -111,6 +112,14 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     exitConfirmation();
                 }
+                break;
+            case R.id.nav_schedule:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://8ccc.com.au/schedule"));
+                startActivity(browserIntent);
+                break;
+            case R.id.nav_contact:
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://8ccc.com.au/contact"));
+                startActivity(intent);
                 break;
         }
         if (workingFragment) {
