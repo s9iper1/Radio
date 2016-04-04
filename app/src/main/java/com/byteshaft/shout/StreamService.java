@@ -121,7 +121,6 @@ public class StreamService extends Service implements RadioListener {
 
     @Override
     public void onRadioConnected() {
-        playStream();
 
     }
 
