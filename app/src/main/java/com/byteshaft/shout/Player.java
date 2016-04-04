@@ -154,7 +154,7 @@ public class Player extends Fragment implements View.OnClickListener {
         if (AppGlobals.getSongStatus()) {
             mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
         } else {
-            mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_play);
+            mPlaybackButton.setBackgroundResource(R.drawable.play);
         }
     }
 }

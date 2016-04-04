@@ -24,7 +24,7 @@ public class AppGlobals extends Application{
         pauseButton = decodeSampledBitmapFromResource(getResources(),
                 R.drawable.apollo_holo_dark_pause, 32, 32);
         playButton = decodeSampledBitmapFromResource(getResources(),
-                R.drawable.apollo_holo_dark_play, 32, 32);
+                R.drawable.play, 32, 32);
 
 
     }
