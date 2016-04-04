@@ -134,6 +134,9 @@ public class StreamService extends Service implements RadioListener {
                 NotificationService.getsInstance().showNotification();
                 Player.getInstance().stopProgressBar();
                 Helpers.updateMainViewButton();
+                if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
+                    Player.getInstance().stopProgressBar();
+                }
             }
         });
 
@@ -148,6 +151,9 @@ public class StreamService extends Service implements RadioListener {
                 AppGlobals.setSongPlaying(false);
                 NotificationService.getsInstance().showNotification();
                 Helpers.updateMainViewButton();
+                if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
+                    Player.getInstance().stopProgressBar();
+                }
 
             }
         });
