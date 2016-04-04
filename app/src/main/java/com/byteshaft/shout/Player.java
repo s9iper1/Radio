@@ -1,20 +1,27 @@
 package com.byteshaft.shout;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
-public class Player extends Fragment implements View.OnClickListener  {
+public class Player extends Fragment implements View.OnClickListener {
 
     private View mBaseView;
     public Button mPlaybackButton;
-    public CustomMediaPlayer sMediaPlayer;
     private static Player sInstance;
     private boolean mFreshRun = true;
+    public ProgressBar mProgressBar;
+    private ObjectAnimator animation;
+    private Button shareButton;
 
     private void setInstance(Player activity) {
         sInstance = activity;
@@ -28,18 +35,66 @@ public class Player extends Fragment implements View.OnClickListener  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBaseView = inflater.inflate(R.layout.player, container, false);
         setInstance(this);
+        mProgressBar = (ProgressBar) mBaseView.findViewById(R.id.progress_bar);
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+            mProgressBar.setProgressDrawable(getResources().getDrawable
+                    (R.drawable.progress_bar_less_than_lollipop));
+        } else {
+            mProgressBar.setProgressDrawable(getResources().getDrawable
+                    (R.drawable.progress_bar_for_greater_than_lollipop));
+
+        }
+        shareButton = (Button) mBaseView.findViewById(R.id.share_button);
+        shareButton.setOnClickListener(this);
         mPlaybackButton = (Button) mBaseView.findViewById(R.id.button_toggle_playback);
-        getActivity().startService(new Intent(getActivity().getApplicationContext(),
-                StreamService.class));
         mPlaybackButton.setOnClickListener(this);
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
+        intent.putExtra(AppGlobals.READY_STREAM, true);
+        if (getService() == null) {
+            getActivity().startService(intent);
+        }
+        Intent notificationIntent = new Intent(getActivity().getApplicationContext(),
+                NotificationService.class);
+        notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+        Log.i("NOtification", String.valueOf(NotificationService.getsInstance() == null));
+        if (NotificationService.getsInstance() != null) {
+            NotificationService.getsInstance().onDestroy();
+            NotificationService.sInstance = null;
+        }
+        if (NotificationService.getsInstance() == null) {
+            getActivity().startService(notificationIntent);
+        }
         return mBaseView;
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void updateProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        animation = ObjectAnimator.ofInt(mProgressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+        animation.setDuration(5000); //in milliseconds
+        animation.setRepeatCount(Animation.INFINITE);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
+    }
+
+    public void stopProgressBar() {
+        mProgressBar.clearAnimation();
+        mProgressBar.animate().cancel();
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
     public void onClick(View v) {
-        sMediaPlayer = CustomMediaPlayer.getInstance();
         switch (v.getId()) {
             case R.id.button_toggle_playback:
+                if (animation != null && animation.isRunning()) {
+                    stopProgressBar();
+                }
                 togglePlayPause();
                 if (!AppGlobals.isNotificationVisible()) {
                     Intent notificationIntent = new Intent(getActivity().getApplicationContext(),
@@ -47,7 +102,20 @@ public class Player extends Fragment implements View.OnClickListener  {
                     notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     getActivity().startService(notificationIntent);
                 }
+                break;
+            case R.id.share_button:
+                share();
+                break;
+
         }
+    }
+
+    private void share(){
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = "Hey Listen to the program on 8CCC now by going to http://8ccc.com.au/live";
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
     private StreamService getService() {
@@ -55,25 +123,38 @@ public class Player extends Fragment implements View.OnClickListener  {
     }
 
     public void togglePlayPause() {
-        if (!sMediaPlayer.isPlaying()) {
+        if (!AppGlobals.getSongStatus()) {
             if (mFreshRun) {
                 mFreshRun = false;
             }
-            getService().startStream();
+            if (getService() == null) {
+                Intent intent = new Intent(AppGlobals.getContext(), StreamService.class);
+                intent.putExtra(AppGlobals.READY_STREAM, false);
+                if (getActivity() == null) {
+                    NotificationService.getsInstance().stopForeground(true);
+                    NotificationService.getsInstance().stopSelf();
+                } else {
+                    getActivity().startService(intent);
+                }
+            }
+            getService().playStream();
         } else {
-            sMediaPlayer.pause();
+            if (getService() != null) {
+                getService().stopStream();
+                AppGlobals.setSongPlaying(false);
+                Helpers.updateMainViewButton();
+                NotificationService.getsInstance().showNotification();
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        sMediaPlayer = CustomMediaPlayer.getInstance();
-        if (sMediaPlayer.isPlaying()) {
+        if (AppGlobals.getSongStatus()) {
             mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
         } else {
-            mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_play);
+            mPlaybackButton.setBackgroundResource(R.drawable.play);
         }
     }
-
 }

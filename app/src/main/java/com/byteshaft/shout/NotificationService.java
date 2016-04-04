@@ -1,6 +1,7 @@
 package com.byteshaft.shout;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -16,7 +17,8 @@ public class NotificationService extends Service {
     private final String LOG_TAG = "NotificationService";
     private RemoteViews views;
     private RemoteViews bigViews;
-    private static NotificationService sInstance;
+    public static NotificationService sInstance;
+    private NotificationManager notificationManager;
 
     public static NotificationService getsInstance() {
         return sInstance;
@@ -30,11 +32,16 @@ public class NotificationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sInstance = this;
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-            showNotification();
-            AppGlobals.setNotificationVisibility(true);
+//            showNotification();
+//            AppGlobals.setNotificationVisibility(true);
         } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
-            Player.getInstance().togglePlayPause();
+            try {
+                Player.getInstance().togglePlayPause();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             showNotification();
             Log.i(LOG_TAG, "Clicked Play");
         } else if (intent.getAction().equals(
@@ -42,7 +49,6 @@ public class NotificationService extends Service {
             Log.i(LOG_TAG, "Received Stop Foreground Intent");
             stopForeground(true);
             stopSelf();
-            Player.getInstance().sMediaPlayer.pause();
             AppGlobals.setNotificationVisibility(false);
         }
 
@@ -53,6 +59,8 @@ public class NotificationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         AppGlobals.setNotificationVisibility(false);
+        stopForeground(true);
+        stopSelf();
     }
 
     public void showNotification() {
@@ -70,17 +78,17 @@ public class NotificationService extends Service {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent previousIntent = new Intent(this, NotificationService.class);
         previousIntent.setAction(Constants.ACTION.PREV_ACTION);
         PendingIntent ppreviousIntent = PendingIntent.getService(this, 0,
-                previousIntent, 0);
+                previousIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent playIntent = new Intent(this, NotificationService.class);
         playIntent.setAction(Constants.ACTION.PLAY_ACTION);
         PendingIntent pplayIntent = PendingIntent.getService(this, 0,
-                playIntent, 0);
+                playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent nextIntent = new Intent(this, NotificationService.class);
         nextIntent.setAction(Constants.ACTION.NEXT_ACTION);
@@ -88,7 +96,7 @@ public class NotificationService extends Service {
         Intent closeIntent = new Intent(this, NotificationService.class);
         closeIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
         PendingIntent pcloseIntent = PendingIntent.getService(this, 0,
-                closeIntent, 0);
+                closeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         views.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
         bigViews.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
@@ -96,25 +104,28 @@ public class NotificationService extends Service {
         views.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
         bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
 
-        if (!Player.getInstance().sMediaPlayer.isPlaying()) {
-            views.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.apollo_holo_dark_play);
-            bigViews.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.apollo_holo_dark_play);
+        if (AppGlobals.getSongStatus()) {
+            views.setImageViewBitmap(R.id.status_bar_play,
+                    AppGlobals.pauseButton);
+            bigViews.setImageViewBitmap(R.id.status_bar_play,
+                    AppGlobals.pauseButton);
         } else {
-            views.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.apollo_holo_dark_pause);
-            bigViews.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.apollo_holo_dark_pause);
+            views.setImageViewBitmap(R.id.status_bar_play,
+                    AppGlobals.playButton);
+            bigViews.setImageViewBitmap(R.id.status_bar_play,
+                    AppGlobals.playButton);
         }
+
+        views.setImageViewBitmap(R.id.status_bar_icon, AppGlobals.notificationAlbumArt);
+        bigViews.setImageViewBitmap(R.id.status_bar_album_art, AppGlobals.notificationAlbumArt);
 
         bigViews.setTextViewText(R.id.status_bar_album_name, "8CCC FM");
 
         status = new Notification.Builder(this).build();
         status.contentView = views;
         status.bigContentView = bigViews;
-        status.flags = Notification.FLAG_AUTO_CANCEL;
-        status.icon = R.drawable.ic_stat_ic_notification;
+        status.flags = Notification.FLAG_ONGOING_EVENT;
+        status.icon = R.drawable.icon;
         status.contentIntent = pendingIntent;
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
     }
