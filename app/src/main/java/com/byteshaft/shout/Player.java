@@ -21,6 +21,7 @@ public class Player extends Fragment implements View.OnClickListener {
     private boolean mFreshRun = true;
     public ProgressBar mProgressBar;
     private ObjectAnimator animation;
+    private Button shareButton;
 
     private void setInstance(Player activity) {
         sInstance = activity;
@@ -43,8 +44,11 @@ public class Player extends Fragment implements View.OnClickListener {
                     (R.drawable.progress_bar_for_greater_than_lollipop));
 
         }
+        shareButton = (Button) mBaseView.findViewById(R.id.share_button);
+        shareButton.setOnClickListener(this);
         mPlaybackButton = (Button) mBaseView.findViewById(R.id.button_toggle_playback);
         mPlaybackButton.setOnClickListener(this);
+
         Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
         intent.putExtra(AppGlobals.READY_STREAM, true);
         if (getService() == null) {
@@ -98,7 +102,20 @@ public class Player extends Fragment implements View.OnClickListener {
                     notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     getActivity().startService(notificationIntent);
                 }
+                break;
+            case R.id.share_button:
+                share();
+                break;
+
         }
+    }
+
+    private void share(){
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = "Hey Listen to the program on 8CCC now by going to http://8ccc.com.au/live";
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
     private StreamService getService() {
