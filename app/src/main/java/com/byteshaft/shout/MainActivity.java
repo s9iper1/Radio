@@ -88,9 +88,12 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+            if (!AppGlobals.getSongStatus()) {
+                finish();
+            }
         } else {
             if (AppGlobals.getSongStatus()) {
-                showConfirmationDialog();
+                exitConfirmation();
             } else {
                 finish();
             }
@@ -108,9 +111,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_exit:
                 if (AppGlobals.getSongStatus()) {
-                    showConfirmationDialog();
-                } else {
                     exitConfirmation();
+                } else {
+                    onBackPressed();
                 }
                 break;
             case R.id.nav_schedule:
@@ -152,19 +155,30 @@ public class MainActivity extends AppCompatActivity
 
     private void exitConfirmation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Exit Application");
-        builder.setMessage("You want to exit ?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle("Do you really want to exit?");
+        builder.setMessage("you can either Exit the App, Minimize the app(leaving any " +
+                "audio running) or cancel.");
+        builder.setNegativeButton("Minimize", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 finish();
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton("cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Player.getInstance().togglePlayPause();
                 finish();
+
+
             }
         });
         builder.create();

@@ -151,6 +151,9 @@ public class Player extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+        if (mProgressBar.getVisibility() == View.VISIBLE) {
+            stopProgressBar();
+        }
         if (AppGlobals.getSongStatus()) {
             mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
         } else {
