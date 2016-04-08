@@ -82,7 +82,7 @@ public class Player extends Fragment implements View.OnClickListener {
         } else {
             mPlaybackButton.setBackgroundResource(R.drawable.play);
         }
-c    }
+    }
 
     @Override
     public void onDestroy() {
