@@ -1,21 +1,26 @@
 package com.byteshaft.shout;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 public class Player extends Fragment implements View.OnClickListener {
 
-    private View mBaseView;
+//    private View mBaseView;
     public Button mPlaybackButton;
     private static Player sInstance;
     private boolean mFreshRun = true;
@@ -33,7 +38,14 @@ public class Player extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mBaseView = inflater.inflate(R.layout.player, container, false);
+        FrameLayout frameLayout = new FrameLayout(getActivity());
+        populateViewForOrientation(inflater, frameLayout, R.layout.player);
+        return frameLayout;
+    }
+
+    private void populateViewForOrientation(LayoutInflater inflater, ViewGroup viewGroup, int layout) {
+        viewGroup.removeAllViewsInLayout();
+        View mBaseView = inflater.inflate(layout, viewGroup);
         setInstance(this);
         mProgressBar = (ProgressBar) mBaseView.findViewById(R.id.progress_bar);
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -65,8 +77,12 @@ public class Player extends Fragment implements View.OnClickListener {
         if (NotificationService.getsInstance() == null) {
             getActivity().startService(notificationIntent);
         }
-        return mBaseView;
-    }
+        if (AppGlobals.getSongStatus()) {
+            mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
+        } else {
+            mPlaybackButton.setBackgroundResource(R.drawable.play);
+        }
+c    }
 
     @Override
     public void onDestroy() {
@@ -149,8 +165,44 @@ public class Player extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.i("TAG", "landscape");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            populateViewForOrientation(inflater, (ViewGroup) getView(), R.layout.player_land);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.i("TAG", "portrait");
+            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            populateViewForOrientation(inflater, (ViewGroup) getView(), R.layout.player);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        WindowManager winMan = (WindowManager)getActivity().getApplicationContext()
+                .getSystemService(Context.WINDOW_SERVICE);
+
+        if (winMan != null) {
+            int orientation = winMan.getDefaultDisplay().getOrientation();
+
+            if (orientation == 0) {
+                // Portrait
+                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                LayoutInflater inflater = LayoutInflater.from(getActivity());
+                populateViewForOrientation(inflater, (ViewGroup) getView(), R.layout.player);
+
+            }
+            else if (orientation == 1) {
+                // Landscape
+                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+                LayoutInflater inflater = LayoutInflater.from(getActivity());
+                populateViewForOrientation(inflater, (ViewGroup) getView(), R.layout.player_land);
+            }
+        }
         if (mProgressBar.getVisibility() == View.VISIBLE) {
             stopProgressBar();
         }

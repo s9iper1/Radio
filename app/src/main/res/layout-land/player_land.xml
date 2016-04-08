@@ -42,6 +42,7 @@
     <Button
         android:layout_width="35dp"
         android:layout_height="35dp"
+        android:layout_gravity="center"
         android:layout_marginTop="1dp"
         android:background="@drawable/sms"
         android:id="@+id/sms"/>
@@ -73,7 +74,7 @@
 
     <Button
         android:background="@drawable/ic_share"
-
+        android:layout_gravity="center"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="10dp"
