@@ -169,12 +169,12 @@ public class Player extends Fragment implements View.OnClickListener {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Log.i("TAG", "landscape");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+            ((AppCompatActivity)getActivity()).getSupportActionBar().invalidateOptionsMenu();
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             populateViewForOrientation(inflater, (ViewGroup) getView(), R.layout.player_land);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             Log.i("TAG", "portrait");
-            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             populateViewForOrientation(inflater, (ViewGroup) getView(), R.layout.player);
         }
@@ -191,14 +191,14 @@ public class Player extends Fragment implements View.OnClickListener {
 
             if (orientation == 0) {
                 // Portrait
-                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
                 populateViewForOrientation(inflater, (ViewGroup) getView(), R.layout.player);
 
             }
             else if (orientation == 1) {
                 // Landscape
-                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+//                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
                 populateViewForOrientation(inflater, (ViewGroup) getView(), R.layout.player_land);
             }
