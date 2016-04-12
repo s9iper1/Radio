@@ -20,7 +20,7 @@ public class AppGlobals extends Application{
         super.onCreate();
         sContext = getApplicationContext();
         notificationAlbumArt = decodeSampledBitmapFromResource(getResources(),
-                R.drawable.notification, 60, 60);
+                R.drawable.notification, 128, 128);
         pauseButton = decodeSampledBitmapFromResource(getResources(),
                 R.drawable.apollo_holo_dark_pause, 32, 32);
         playButton = decodeSampledBitmapFromResource(getResources(),
