@@ -12,12 +12,12 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.View;
 
-import co.mobiwise.library.radio.RadioListener;
-import co.mobiwise.library.radio.RadioManager;
+import com.pits.library.radio.RadioListener;
+import com.pits.library.radio.RadioManager;
 
 public class StreamService extends Service implements RadioListener {
 
-    private RadioManager mRadioManager;
+    public RadioManager mRadioManager;
     private static StreamService sService;
     private boolean mFreshRun = true;
 
@@ -56,9 +56,8 @@ public class StreamService extends Service implements RadioListener {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+        mRadioManager.closeNotification();
         sService = null;
-        NotificationService.getsInstance().stopForeground(true);
-        NotificationService.getsInstance().onDestroy();
         stopSelf();
     }
 
@@ -114,6 +113,7 @@ public class StreamService extends Service implements RadioListener {
         handler.post(new Runnable() {
             @Override
             public void run() {
+                Player.getInstance().textView.setText("Loading...");
                 Player.getInstance().updateProgressBar();
             }
         });
@@ -131,9 +131,9 @@ public class StreamService extends Service implements RadioListener {
             @Override
             public void run() {
                 AppGlobals.setSongPlaying(true);
-                NotificationService.getsInstance().showNotification();
                 Player.getInstance().stopProgressBar();
                 Helpers.updateMainViewButton();
+                Player.getInstance().textView.setText("Playing");
                 if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
                     Player.getInstance().stopProgressBar();
                 }
@@ -149,8 +149,8 @@ public class StreamService extends Service implements RadioListener {
             @Override
             public void run() {
                 AppGlobals.setSongPlaying(false);
-                NotificationService.getsInstance().showNotification();
                 Helpers.updateMainViewButton();
+                Player.getInstance().textView.setText("Stopped");
                 if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
                     Player.getInstance().stopProgressBar();
                 }
@@ -176,6 +176,11 @@ public class StreamService extends Service implements RadioListener {
                 }
             }
         });
+    }
+
+    @Override
+    public void songInfo(String s) {
+
     }
 }
 

@@ -17,6 +17,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class Player extends Fragment implements View.OnClickListener {
 
@@ -27,6 +28,7 @@ public class Player extends Fragment implements View.OnClickListener {
     public ProgressBar mProgressBar;
     private ObjectAnimator animation;
     private Button shareButton;
+    public TextView textView;
 
     private void setInstance(Player activity) {
         sInstance = activity;
@@ -59,23 +61,13 @@ public class Player extends Fragment implements View.OnClickListener {
         shareButton = (Button) mBaseView.findViewById(R.id.share_button);
         shareButton.setOnClickListener(this);
         mPlaybackButton = (Button) mBaseView.findViewById(R.id.button_toggle_playback);
+        textView = (TextView) mBaseView.findViewById(R.id.view);
         mPlaybackButton.setOnClickListener(this);
 
         Intent intent = new Intent(getActivity().getApplicationContext(), StreamService.class);
         intent.putExtra(AppGlobals.READY_STREAM, true);
         if (getService() == null) {
             getActivity().startService(intent);
-        }
-        Intent notificationIntent = new Intent(getActivity().getApplicationContext(),
-                NotificationService.class);
-        notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-        Log.i("NOtification", String.valueOf(NotificationService.getsInstance() == null));
-        if (NotificationService.getsInstance() != null) {
-            NotificationService.getsInstance().onDestroy();
-            NotificationService.sInstance = null;
-        }
-        if (NotificationService.getsInstance() == null) {
-            getActivity().startService(notificationIntent);
         }
         if (AppGlobals.getSongStatus()) {
             mPlaybackButton.setBackgroundResource(R.drawable.apollo_holo_dark_pause);
@@ -112,17 +104,10 @@ public class Player extends Fragment implements View.OnClickListener {
                     stopProgressBar();
                 }
                 togglePlayPause();
-                if (!AppGlobals.isNotificationVisible()) {
-                    Intent notificationIntent = new Intent(getActivity().getApplicationContext(),
-                            NotificationService.class);
-                    notificationIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-                    getActivity().startService(notificationIntent);
-                }
                 break;
             case R.id.share_button:
                 share();
                 break;
-
         }
     }
 
@@ -146,12 +131,6 @@ public class Player extends Fragment implements View.OnClickListener {
             if (getService() == null) {
                 Intent intent = new Intent(AppGlobals.getContext(), StreamService.class);
                 intent.putExtra(AppGlobals.READY_STREAM, false);
-                if (getActivity() == null) {
-                    NotificationService.getsInstance().stopForeground(true);
-                    NotificationService.getsInstance().stopSelf();
-                } else {
-                    getActivity().startService(intent);
-                }
             }
             getService().playStream();
         } else {
@@ -159,7 +138,6 @@ public class Player extends Fragment implements View.OnClickListener {
                 getService().stopStream();
                 AppGlobals.setSongPlaying(false);
                 Helpers.updateMainViewButton();
-                NotificationService.getsInstance().showNotification();
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.byteshaft.shout;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,6 +27,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pits.library.radio.RadioPlayerService;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private Bundle newBundy = new Bundle();
     private Toolbar toolbar;
+    private NotificationManager mNotificationManager;
+    private static final int NOTIFICATION_ID = 001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,7 @@ public class MainActivity extends AppCompatActivity
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.con);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
@@ -165,8 +171,8 @@ public class MainActivity extends AppCompatActivity
     private void exitConfirmation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Do you really want to exit?");
-        builder.setMessage("you can either Exit the App, Minimize the app(leaving any " +
-                "audio running) or cancel.");
+        builder.setMessage("You can either Exit the App, Minimise the App(leaving any audio running) " +
+                "or Cancel.");
         builder.setNegativeButton("Minimize", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -184,7 +190,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                Player.getInstance().togglePlayPause();
+                Intent intent = new Intent();
+                intent.setAction("com.pits.library.radio.radio.INTENT_CANCEL");
+                sendBroadcast(intent);
+                StreamService.getInstance().stopStream();
+                RadioPlayerService.removeNotification();
                 finish();
 
 

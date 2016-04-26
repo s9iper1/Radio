@@ -30,13 +30,14 @@
 
     </RelativeLayout>
 
-    <View
+    <TextView
         android:layout_below="@+id/img_container"
         android:layout_marginTop="5dp"
         android:id="@+id/view"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/genre" />
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <Button
         android:layout_width="40dp"
@@ -49,8 +50,8 @@
         android:layout_toLeftOf="@+id/play_pause_background"/>
 
     <RelativeLayout
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:id="@+id/play_pause_background"
         android:background="@drawable/button_background"
         android:layout_below="@+id/view"
@@ -69,10 +70,12 @@
     <Button
         android:id="@+id/button_toggle_playback"
         android:background="@drawable/play"
-        android:layout_centerInParent="true"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        />
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginRight="8dp"
+        android:layout_centerVertical="true"
+        android:layout_alignRight="@+id/progress_bar"
+        android:layout_alignEnd="@+id/progress_bar" />
 
     </RelativeLayout>
 
