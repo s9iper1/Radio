@@ -1,7 +1,6 @@
 package com.byteshaft.shout;
 
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,8 +41,7 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private Bundle newBundy = new Bundle();
     private Toolbar toolbar;
-    private NotificationManager mNotificationManager;
-    private static final int NOTIFICATION_ID = 001;
+    private MenuItem menuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,6 @@ public class MainActivity extends AppCompatActivity
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.con);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
@@ -69,6 +67,10 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        if(menuItem != null) {
+            Log.i("TAG", "Running");
+//            navigationView.getMenu().findItem(mecdnuItem.getItemId()).setChecked(false);
+        }
 
     }
 
@@ -103,10 +105,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else {
             if (!AppGlobals.getSongStatus()) {
                 finish();
             }
-        } else {
             if (AppGlobals.getSongStatus()) {
                 exitConfirmation();
             } else {
@@ -132,13 +134,13 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.nav_schedule:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://8ccc.com.au/schedule"));
-                startActivity(browserIntent);
+                externalUrlConfirmation(AppGlobals.SCHEDULE_URL);
                 break;
             case R.id.nav_contact:
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://8ccc.com.au/contact"));
-                startActivity(intent);
+                externalUrlConfirmation(AppGlobals.CONTACT_URL);
                 break;
+            case R.id.nav_membership:
+                externalUrlConfirmation(AppGlobals.MEMBERSHIP_URL);
         }
         if (workingFragment) {
             Intent intent = new Intent(getApplicationContext(), activity);
@@ -146,22 +148,22 @@ public class MainActivity extends AppCompatActivity
         }
         }
 
-    private void showConfirmationDialog() {
+    private void externalUrlConfirmation(final String url) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Stop playback ?");
-        builder.setMessage("Should music keep playing in the background ?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle("Info");
+        builder.setMessage("You are about to visit external link. Confirm to proceed");
+        builder.setPositiveButton("confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                finish();
+                Intent membershipIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(membershipIntent);
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                stopService(new Intent(getApplicationContext(), StreamService.class));
-                finish();
+                dialog.dismiss();
             }
         });
         builder.create();
@@ -215,26 +217,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         selectDrawerItem(item);
-        navigationView.getMenu().findItem(item.getItemId()).setChecked(true);
+        menuItem = item;
+//        navigationView.getMenu().findItem(item.getItemId()).setChecked(true);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,

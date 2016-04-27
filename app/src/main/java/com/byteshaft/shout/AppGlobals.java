@@ -14,6 +14,19 @@ public class AppGlobals extends Application{
     public static Bitmap notificationAlbumArt;
     public static Bitmap pauseButton;
     public static Bitmap playButton;
+    public static final String SCHEDULE_URL = "http://8ccc.com.au/schedule";
+    public static final String CONTACT_URL = "http://8ccc.com.au/contact";
+    public static final String MEMBERSHIP_URL = "http://8ccc.com.au/membership";
+    public static final String ABOUT_TEXT = "Formed in 1981, 102.1FM 8CCC is an outback radio " +
+            "station with a proud history of unique programming &amp; regular Centralian/Barkly-inspired music."+
+            " \n\n <b>8CCC’s mission:</b> \n To involve and service the Alice Springs and Tennant Creek" +
+            " communities with services, programming and content that is not readily available in the" +
+            " commercial broadcasting arena. \n\n <b>8CCC strives to:</b> \n \n<i>Promote and foster" +
+            " a community and multicultural voice through the electronic media.</i> \n \n" +
+            "<i> * Enrich people’s lives with a diversity of programs and services that inform, " +
+            "educate and entertain.</i>\n \n * 8CCC is a member of the Community Broadcasters " +
+            "Association of Australia (CBAA) and part of Australia’s Community Radio Network (CRN)."
+            + " \n\n Get involved and be a part of it! \n";
 
     @Override
     public void onCreate() {
