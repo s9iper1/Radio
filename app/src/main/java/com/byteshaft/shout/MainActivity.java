@@ -1,5 +1,6 @@
 package com.byteshaft.shout;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity
 
     private NavigationView navigationView;
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private static MainActivity instance;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -43,10 +45,16 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private MenuItem menuItem;
 
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instance = this;
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -134,13 +142,13 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.nav_schedule:
-                externalUrlConfirmation(AppGlobals.SCHEDULE_URL);
+                externalUrlConfirmation(AppGlobals.SCHEDULE_URL, MainActivity.this);
                 break;
             case R.id.nav_contact:
-                externalUrlConfirmation(AppGlobals.CONTACT_URL);
+                externalUrlConfirmation(AppGlobals.CONTACT_URL, MainActivity.this);
                 break;
             case R.id.nav_membership:
-                externalUrlConfirmation(AppGlobals.MEMBERSHIP_URL);
+                externalUrlConfirmation(AppGlobals.MEMBERSHIP_URL, MainActivity.this);
         }
         if (workingFragment) {
             Intent intent = new Intent(getApplicationContext(), activity);
@@ -148,8 +156,8 @@ public class MainActivity extends AppCompatActivity
         }
         }
 
-    private void externalUrlConfirmation(final String url) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+    public void externalUrlConfirmation(final String url, Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Info");
         builder.setMessage("You are about to visit external link. Confirm to proceed");
         builder.setPositiveButton("confirm", new DialogInterface.OnClickListener() {
@@ -253,6 +261,8 @@ public class MainActivity extends AppCompatActivity
                     return new Player();
                 case 1:
                     return new PlaceholderFragment();
+                case 2:
+                    return new More();
                 default:
                     return new PlaceholderFragment();
             }
