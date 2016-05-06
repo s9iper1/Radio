@@ -51,8 +51,8 @@
         android:layout_toLeftOf="@+id/play_pause_background"/>
 
     <RelativeLayout
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="73dp"
+        android:layout_height="73dp"
         android:id="@+id/play_pause_background"
         android:background="@drawable/button_background"
         android:layout_below="@+id/view"
@@ -71,12 +71,11 @@
     <Button
         android:id="@+id/button_toggle_playback"
         android:background="@drawable/play"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
         android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/progress_bar"
-        android:layout_alignEnd="@+id/progress_bar" />
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 

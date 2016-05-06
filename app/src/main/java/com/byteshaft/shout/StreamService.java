@@ -43,7 +43,7 @@ public class StreamService extends Service implements RadioListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sService = this;
-        mRadioManager = RadioManager.with(this);
+        mRadioManager = RadioManager.with(this, MainActivity.class);
         mRadioManager.registerListener(this);
         mRadioManager.connect();
         return START_NOT_STICKY;
@@ -85,6 +85,7 @@ public class StreamService extends Service implements RadioListener {
                 case TelephonyManager.CALL_STATE_RINGING:
                     if (AppGlobals.getSongStatus()) {
                         mRadioManager.stopRadio();
+                        mRadioManager.updateNotification();
                         songWasOn = true;
                     }
                     break;
@@ -131,6 +132,7 @@ public class StreamService extends Service implements RadioListener {
             @Override
             public void run() {
                 AppGlobals.setSongPlaying(true);
+                mRadioManager.updateNotification();
                 Player.getInstance().stopProgressBar();
                 Helpers.updateMainViewButton();
                 Player.getInstance().textView.setText("Playing");
@@ -149,6 +151,7 @@ public class StreamService extends Service implements RadioListener {
             @Override
             public void run() {
                 AppGlobals.setSongPlaying(false);
+                mRadioManager.updateNotification();
                 Helpers.updateMainViewButton();
                 Player.getInstance().textView.setText("Stopped");
                 if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
