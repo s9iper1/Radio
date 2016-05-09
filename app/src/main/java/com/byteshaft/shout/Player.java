@@ -74,6 +74,11 @@ public class Player extends Fragment implements View.OnClickListener {
         } else {
             mPlaybackButton.setBackgroundResource(R.drawable.play);
         }
+        if (AppGlobals.getSongStatus()) {
+            textView.setText("Playing");
+        } else {
+            textView.setText("Stopped");
+        }
     }
 
     @Override
