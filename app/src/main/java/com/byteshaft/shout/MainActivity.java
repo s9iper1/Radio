@@ -1,5 +1,6 @@
 package com.byteshaft.shout;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,11 +28,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pits.library.radio.RadioPlayerService;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private NavigationView navigationView;
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private static MainActivity instance;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -38,11 +43,18 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private Bundle newBundy = new Bundle();
     private Toolbar toolbar;
+    private MenuItem menuItem;
+
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instance = this;
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -63,6 +75,10 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        if(menuItem != null) {
+            Log.i("TAG", "Running");
+//            navigationView.getMenu().findItem(mecdnuItem.getItemId()).setChecked(false);
+        }
 
     }
 
@@ -97,10 +113,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else {
             if (!AppGlobals.getSongStatus()) {
                 finish();
             }
-        } else {
             if (AppGlobals.getSongStatus()) {
                 exitConfirmation();
             } else {
@@ -126,13 +142,13 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.nav_schedule:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://8ccc.com.au/schedule"));
-                startActivity(browserIntent);
+                externalUrlConfirmation(AppGlobals.SCHEDULE_URL, MainActivity.this);
                 break;
             case R.id.nav_contact:
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://8ccc.com.au/contact"));
-                startActivity(intent);
+                externalUrlConfirmation(AppGlobals.CONTACT_URL, MainActivity.this);
                 break;
+            case R.id.nav_membership:
+                externalUrlConfirmation(AppGlobals.MEMBERSHIP_URL, MainActivity.this);
         }
         if (workingFragment) {
             Intent intent = new Intent(getApplicationContext(), activity);
@@ -140,22 +156,22 @@ public class MainActivity extends AppCompatActivity
         }
         }
 
-    private void showConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Stop playback ?");
-        builder.setMessage("Should music keep playing in the background ?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+    public void externalUrlConfirmation(final String url, Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("Info");
+        builder.setMessage("You are about to visit external link. Confirm to proceed");
+        builder.setPositiveButton("confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                finish();
+                Intent membershipIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(membershipIntent);
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                stopService(new Intent(getApplicationContext(), StreamService.class));
-                finish();
+                dialog.dismiss();
             }
         });
         builder.create();
@@ -165,8 +181,8 @@ public class MainActivity extends AppCompatActivity
     private void exitConfirmation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Do you really want to exit?");
-        builder.setMessage("you can either Exit the App, Minimize the app(leaving any " +
-                "audio running) or cancel.");
+        builder.setMessage("You can either Exit the App, Minimise the App(leaving any audio running) " +
+                "or Cancel.");
         builder.setNegativeButton("Minimize", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -184,7 +200,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                Player.getInstance().togglePlayPause();
+                Intent intent = new Intent();
+                intent.setAction("com.pits.library.radio.radio.INTENT_CANCEL");
+                sendBroadcast(intent);
+                StreamService.getInstance().stopStream();
+                RadioPlayerService.removeNotification();
                 finish();
 
 
@@ -205,26 +225,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         selectDrawerItem(item);
-        navigationView.getMenu().findItem(item.getItemId()).setChecked(true);
+        menuItem = item;
+//        navigationView.getMenu().findItem(item.getItemId()).setChecked(true);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -253,6 +261,8 @@ public class MainActivity extends AppCompatActivity
                     return new Player();
                 case 1:
                     return new PlaceholderFragment();
+                case 2:
+                    return new More();
                 default:
                     return new PlaceholderFragment();
             }

@@ -4,4 +4,22 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="shoutcast_url">http://198.178.123.5:8476/stream/1/</string>
     <string name="action_settings">Settings</string>
+    <string name="about">Formed in 1981, 102.1FM 8CCC is an outback radio station with a proud history of unique programming &amp; regular Centralian/Barkly-inspired music.
+"/n"
+        <b>8CCC’s mission:</b>
+
+To involve and service the Alice Springs and Tennant Creek communities with services, programming and content that is not readily available in the commercial broadcasting arena.
+/n
+        <b>8CCC strives to:</b>
+        /n
+
+<li>Promote and foster a community and multicultural voice through the electronic media.</li> /n
+<li>Enrich people’s lives with a diversity of programs and services that inform, educate and entertain.</li>/n
+
+8CCC is a member of the Community Broadcasters Association of Australia (CBAA) and part of Australia’s Community Radio Network (CRN).
+
+        /n/n
+Get involved and be a part of it!</string>
+    <string name="aboutLink"><u>http://8ccc.com.au/</u></string>
+    <string name="moreLink"><u>http://8ccc.com.au/schedule</u></string>
 </resources>
