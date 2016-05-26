@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity
         builder.setTitle("Do you really want to exit?");
         builder.setMessage("You can either Exit the App, Minimise the App(leaving any audio running) " +
                 "or Cancel.");
-        builder.setNegativeButton("Minimize", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Minimise", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
