@@ -28,8 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pits.library.radio.RadioPlayerService;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -200,12 +198,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                Intent intent = new Intent();
-                intent.setAction("com.pits.library.radio.radio.INTENT_CANCEL");
-                sendBroadcast(intent);
+                StreamService.getInstance().mRadioManager.closeNotification();
                 StreamService.getInstance().stopStream();
-                RadioPlayerService.removeNotification();
-                finish();
+                Intent startMain = new Intent(Intent.ACTION_MAIN);
+                startMain.addCategory(Intent.CATEGORY_HOME);
+                startMain.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
+                startActivity(startMain);
+                MainActivity.this.finish();
 
 
             }
