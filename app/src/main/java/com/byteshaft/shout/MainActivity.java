@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity
      */
     private ViewPager mViewPager;
     private TabLayout tabLayout;
-    private Bundle newBundy = new Bundle();
     private Toolbar toolbar;
     private MenuItem menuItem;
 
@@ -241,10 +240,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {

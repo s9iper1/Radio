@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 
 import com.pits.library.radio.RadioListener;
@@ -46,7 +47,7 @@ public class StreamService extends Service implements RadioListener {
         mRadioManager = RadioManager.with(this, MainActivity.class);
         mRadioManager.registerListener(this);
         mRadioManager.connect();
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     public void playStream() {
@@ -56,6 +57,7 @@ public class StreamService extends Service implements RadioListener {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+        Log.e("service", "onTaskRemoved");
         mRadioManager.closeNotification();
         sService = null;
         stopSelf();
@@ -70,6 +72,7 @@ public class StreamService extends Service implements RadioListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e("service", "onDestroy");
         stopStream();
         sService = null;
         unregisterReceiver(mOutGoingCallListener);
@@ -173,6 +176,7 @@ public class StreamService extends Service implements RadioListener {
         handler.post(new Runnable() {
             @Override
             public void run() {
+                Log.e("Error", "onerror called");
                 if (Player.getInstance().mProgressBar.getVisibility() == View.VISIBLE) {
                     Player.getInstance().stopProgressBar();
                     Helpers.updateMainViewButton();
